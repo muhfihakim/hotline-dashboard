@@ -55,9 +55,9 @@
                                     <td>{{ $item->user_id }}</td>
                                     <td>{{ $item->instansi }}</td>
                                     <td>{{ $item->isi_aduan }}</td>
-                                    <td>{{ $item->created_at->format('d-m-Y H:i') }}</td>
+                                    <td>{{ optional($item->created_at)->format('d-m-Y H:i') }}</td>
                                     <td>
-                                        <form action="{{ route('update.status.admin', $item->id) }}" method="POST">
+                                        <form action="{{ route('update.aduan.admin', $item->id) }}" method="POST">
                                             @csrf
                                             @method('PATCH')
                                             <select name="status" onchange="this.form.submit()">

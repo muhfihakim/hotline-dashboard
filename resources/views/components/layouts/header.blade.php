@@ -1,16 +1,31 @@
 <!--begin::Head-->
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>AdminLTE | Dashboard v2</title>
-    <!--begin::Primary Meta Tags-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="title" content="AdminLTE | Dashboard v2" />
-    <meta name="author" content="ColorlibHQ" />
-    <meta name="description"
-        content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS." />
-    <meta name="keywords"
-        content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard" />
+    <title>Hotline Diskominfo Subang</title>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="description" content="Layanan Hotline Dinas Komunikasi dan Informatika Kabupaten Subang">
+    <meta name="keywords" content="layanan, hotline, aduan, permohonan, customer service">
+    <meta name="author" content="Bidang TIK dan Persandian">
+    <meta name="copyright" content="Bidang TIK dan Persandian">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Hotline Diskominfo Subang">
+    <meta property="og:description" content="Layanan Hotline Dinas Komunikasi dan Informatika Kabupaten Subang">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="#">
+    <meta property="og:image" content="#">
+    <meta property="og:image:alt" content="Layanan Hotline Dinas Komunikasi dan Informatika Kabupaten Subang">
+    <meta property="og:site_name" content="Layanan Hotline Dinas Komunikasi dan Informatika Kabupaten Subang">
+    <meta property="og:locale" content="id_ID">
+
+    <!-- Twitter Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Hotline Diskominfo Subang">
+    <meta name="twitter:description" content="Layanan Hotline Dinas Komunikasi dan Informatika Kabupaten Subang">
+    <meta name="twitter:image" content="#">
+    <meta name="twitter:image:alt" content="Layanan Hotline Dinas Komunikasi dan Informatika Kabupaten Subang">
     <!--end::Primary Meta Tags-->
     <!--begin::Fonts-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
