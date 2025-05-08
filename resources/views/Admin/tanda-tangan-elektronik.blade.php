@@ -37,29 +37,33 @@
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>No</th>
                                 <th>Tiket</th>
                                 <th>Nama Lengkap</th>
-                                <th>No. Pengadu</th>
+                                <th>No. Pemohon</th>
                                 <th>Instansi</th>
                                 <th>E-Mail Dinas</th>
-                                <th>Waktu Permohonan</th>
-                                <th>Srt. Permohonan</th>
+                                <th>Surat</th>
                                 <th>Status</th>
+                                <th>Waktu Permohonan</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($tte as $index => $item)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
                                     <td>{{ $item->nomor_tiket }}</td>
                                     <td>{{ $item->nama_lengkap }}</td>
                                     <td>{{ $item->user_id }}</td>
                                     <td>{{ $item->instansi }}</td>
                                     <td>{{ $item->email_dinas }}</td>
-                                    <td>{{ optional($item->created_at)->format('d-m-Y H:i') ?? '-' }}</td>
-                                    <td>{{ $item->surat_permohonan }}</td>
-                                    <td>{{ $item->status }}</td>
+                                    <td>
+                                        @if ($item->surat_permohonan)
+                                            @php $fileName = basename($item->surat_permohonan); @endphp
+                                            <button type="button" class="btn btn-primary btn-sm"
+                                                onclick="handleSurat('{{ $item->id }}', '{{ url('/uploads/' . $fileName) }}')">
+                                                Lihat Surat
+                                            </button>
+                                        @endif
+                                    </td>
                                     <td>
                                         <form action="{{ route('update.tte.admin', $item->id) }}" method="POST">
                                             @csrf
@@ -72,7 +76,31 @@
                                             </select>
                                         </form>
                                     </td>
+                                    <td>{{ optional($item->created_at)->format('d-m-Y H:i') ?? '-' }}</td>
                                 </tr>
+                                @if ($item->surat_permohonan)
+                                    @php $fileName = basename($item->surat_permohonan); @endphp
+
+                                    <div class="modal fade" id="modalSurat{{ $item->id }}" tabindex="-1"
+                                        role="dialog" aria-labelledby="modalLabel{{ $item->id }}"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Surat Permohonan</h5>
+                                                </div>
+                                                <div class="modal-body p-2">
+                                                    <iframe src="{{ url('/uploads/' . $fileName) }}" width="100%"
+                                                        height="500px" style="border: none;"></iframe>
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default"
+                                                        data-dismiss="modal">Tutup</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                             @endforeach
                         </tbody>
                     </table>
@@ -132,4 +160,24 @@
             </script>
         @endif
     @endsection
+    <script>
+        function handleSurat(id, url) {
+            const isMobile = window.innerWidth < 768; // You can adjust breakpoint here
+
+            if (isMobile) {
+                // 👇 Option A: Buka tab baru
+                window.open(url, '_blank');
+
+                // 👇 Option B (langsung download): Buat anchor & klik otomatis
+                // let a = document.createElement('a');
+                // a.href = url;
+                // a.download = ''; // empty = gunakan nama file asli
+                // document.body.appendChild(a);
+                // a.click();
+                // document.body.removeChild(a);
+            } else {
+                $('#modalSurat' + id).modal('show');
+            }
+        }
+    </script>
 </x-layouts.app>

@@ -13,12 +13,13 @@
                 <!--begin::Row-->
                 <div class="row">
                     <div class="col-sm-6">
-                        <h3 class="mb-0">Aduan Layanan</h3>
+                        <h3 class="mb-0">Permohonan Bandwidth on Demand (BOD)</h3>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-end">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Aduan Layanan</li>
+                            <li class="breadcrumb-item active" aria-current="page">Permohonan Bandwidth on Demand (BOD)
+                            </li>
                         </ol>
                     </div>
                 </div>
@@ -29,32 +30,39 @@
         <div class="app-content">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Daftar Aduan Layanan</h3>
+                    <h3 class="card-title">Daftar Permohonan Bandwidth on Demand(BOD)</h3>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th class="text-center align-middle">Tiket</th>
-                                <th class="text-center align-middle">Nama Lengkap</th>
-                                <th class="text-center align-middle">No. Pengadu</th>
-                                <th class="text-center align-middle">Instansi</th>
-                                <th class="text-center align-middle">Aduan</th>
-                                <th class="text-center align-middle">Status</th>
-                                <th class="text-center align-middle">Waktu Pengaduan</th>
+                                <th>No</th>
+                                <th>Tiket</th>
+                                <th>Nama Lengkap</th>
+                                <th>No. Pengadu</th>
+                                <th>Instansi</th>
+                                <th>Peruntukan</th>
+                                <th>Lokasi</th>
+                                <th>Waktu Pengaduan</th>
+                                <th>Srt. Permohonan</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($aduan as $index => $item)
+                            @foreach ($bod as $index => $item)
                                 <tr>
-                                    <td class="text-center align-middle">{{ $item->nomor_tiket }}</td>
-                                    <td class="text-center align-middle">{{ $item->user_id }}</td>
-                                    <td class="text-center align-middle">{{ $item->nama_lengkap }}</td>
-                                    <td class="text-center align-middle">{{ $item->instansi }}</td>
-                                    <td class="text-center align-middle">{{ $item->isi_aduan }}</td>
-                                    <td class="text-center align-middle">
-                                        <form action="{{ route('update.aduan.admin', $item->id) }}" method="POST">
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $item->nomor_tiket }}</td>
+                                    <td>{{ $item->nama_lengkap }}</td>
+                                    <td>{{ $item->user_id }}</td>
+                                    <td>{{ $item->instansi }}</td>
+                                    <td>{{ $item->jenis_koneksi_peruntukan }}</td>
+                                    <td>{{ $item->lokasi }}</td>
+                                    <td>{{ optional($item->created_at)->format('d-m-Y H:i') ?? '-' }}</td>
+                                    <td>{{ $item->surat_permohonan }}</td>
+                                    <td>
+                                        <form action="{{ route('update.bod.admin', $item->id) }}" method="POST">
                                             @csrf
                                             @method('PATCH')
                                             <select name="status" onchange="this.form.submit()">
@@ -65,8 +73,6 @@
                                             </select>
                                         </form>
                                     </td>
-                                    <td class="text-center align-middle">
-                                        {{ optional($item->created_at)->format('H:i | d-m-Y') }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

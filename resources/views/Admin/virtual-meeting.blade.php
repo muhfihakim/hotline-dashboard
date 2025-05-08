@@ -36,36 +36,43 @@
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Tiket</th>
-                                <th>Nama Lengkap</th>
-                                <th>No. Pemohon</th>
-                                <th>Instansi</th>
-                                <th>Waktu</th>
-                                <th>Jumlah</th>
-                                <th>Durasi</th>
-                                <th>Lokasi</th>
-                                <th>Fasilitas</th>
-                                <th>Srt. Permohonan</th>
-                                <th>Status</th>
+                                <th class="text-center align-middle">Tiket</th>
+                                <th class="text-center align-middle">Nama Lengkap</th>
+                                <th class="text-center align-middle">No. Pemohon</th>
+                                <th class="text-center align-middle">Instansi</th>
+                                <th class="text-center align-middle">Waktu</th>
+                                <th class="text-center align-middle">Jumlah</th>
+                                <th class="text-center align-middle">Durasi</th>
+                                <th class="text-center align-middle">Lokasi</th>
+                                <th class="text-center align-middle">Fasilitas</th>
+                                <th class="text-center align-middle">Surat</th>
+                                <th class="text-center align-middle">Status</th>
+                                <th class="text-center align-middle">Waktu Permohonan</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($vm as $index => $item)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $item->nomor_tiket }}</td>
-                                    <td>{{ $item->nama_lengkap }}</td>
-                                    <td>{{ $item->user_id }}</td>
-                                    <td>{{ $item->instansi }}</td>
-                                    <td>{{ $item->waktu_meeting }}</td>
-                                    <td>{{ $item->jumlah_partisipan }}</td>
-                                    <td>{{ $item->durasi_meeting }}</td>
-                                    <td>{{ $item->lokasi_meeting }}</td>
-                                    <td>{{ $item->jenis_fasilitas }}</td>
-                                    <td>{{ $item->surat_permohonan }}</td>
-                                    <td>{{ $item->status }}</td>
-                                    <td>{{ optional($item->created_at)->format('d-m-Y H:i') ?? '-' }}</td>
-                                    <td>
+                                    <td class="text-center align-middle">{{ $item->nomor_tiket }}</td>
+                                    <td class="text-center align-middle">{{ $item->nama_lengkap }}</td>
+                                    <td class="text-center align-middle">{{ $item->user_id }}</td>
+                                    <td class="text-center align-middle">{{ $item->instansi }}</td>
+                                    <td class="text-center align-middle">{{ $item->waktu_pelaksanaan }}</td>
+                                    <td class="text-center align-middle">{{ $item->jumlah_partisipan }}</td>
+                                    <td class="text-center align-middle">{{ $item->durasi_meeting }}</td>
+                                    <td class="text-center align-middle">{{ $item->lokasi_meeting }}</td>
+                                    <td class="text-center align-middle">{{ $item->link_operator }}</td>
+                                    <td class="text-center align-middle">
+                                        @if ($item->surat_permohonan)
+                                            @php $fileName = basename($item->surat_permohonan); @endphp
+                                            <button type="button" class="btn btn-primary btn-sm"
+                                                onclick="handleSurat('{{ $item->id }}', '{{ url('/uploads/' . $fileName) }}')">
+                                                Lihat Surat
+                                            </button>
+                                        @endif
+                                    </td>
+
+                                    <td class="text-center align-middle">
                                         <form action="{{ route('update.vm.admin', $item->id) }}" method="POST">
                                             @csrf
                                             @method('PATCH')
@@ -77,7 +84,32 @@
                                             </select>
                                         </form>
                                     </td>
+                                    <td class="text-center align-middle">
+                                        {{ optional($item->created_at)->format('H:i | d-m-Y') ?? '-' }}</td>
                                 </tr>
+                                @if ($item->surat_permohonan)
+                                    @php $fileName = basename($item->surat_permohonan); @endphp
+
+                                    <div class="modal fade" id="modalSurat{{ $item->id }}" tabindex="-1"
+                                        role="dialog" aria-labelledby="modalLabel{{ $item->id }}"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Surat Permohonan</h5>
+                                                </div>
+                                                <div class="modal-body p-2">
+                                                    <iframe src="{{ url('/uploads/' . $fileName) }}" width="100%"
+                                                        height="500px" style="border: none;"></iframe>
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default"
+                                                        data-dismiss="modal">Tutup</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                             @endforeach
                         </tbody>
                     </table>
@@ -137,4 +169,24 @@
             </script>
         @endif
     @endsection
+    <script>
+        function handleSurat(id, url) {
+            const isMobile = window.innerWidth < 768; // You can adjust breakpoint here
+
+            if (isMobile) {
+                // 👇 Option A: Buka tab baru
+                window.open(url, '_blank');
+
+                // 👇 Option B (langsung download): Buat anchor & klik otomatis
+                // let a = document.createElement('a');
+                // a.href = url;
+                // a.download = ''; // empty = gunakan nama file asli
+                // document.body.appendChild(a);
+                // a.click();
+                // document.body.removeChild(a);
+            } else {
+                $('#modalSurat' + id).modal('show');
+            }
+        }
+    </script>
 </x-layouts.app>
