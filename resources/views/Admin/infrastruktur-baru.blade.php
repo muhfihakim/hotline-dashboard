@@ -59,7 +59,7 @@
                                     <td class="text-center align-middle">
                                         <a href="https://wa.me/{{ $nomor }}" target="_blank"
                                             class="btn btn-success btn-sm">
-                                            <i class="fab fa-whatsapp"></i> Chat
+                                            <i class="bi bi-whatsapp"></i> Chat
                                         </a>
                                     </td>
                                     <td class="text-center align-middle">{{ $item->instansi }}</td>
@@ -88,7 +88,7 @@
                                         </form>
                                     </td>
                                     <td class="text-center align-middle">
-                                        {{ optional($item->created_at)->format('d-m-Y H:i') ?? '-' }}</td>
+                                        {{ optional($item->created_at)->format('H:i | d-m-Y') ?? '-' }}</td>
                                 </tr>
                                 @if ($item->surat_permohonan)
                                     @php $fileName = basename($item->surat_permohonan); @endphp

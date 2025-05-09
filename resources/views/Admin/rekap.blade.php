@@ -67,6 +67,28 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">Panduan</h3>
+                        </div>
+                        <div class="card-body">
+                            <ol>
+                                <li>Pilih <strong>rentang tanggal</strong> mulai dan akhir yang diinginkan menggunakan
+                                    kolom tanggal yang tersedia.</li>
+                                <li>Pilih <strong>layanan</strong> yang ingin Anda ekspor dari daftar dropdown atau
+                                    pilihan layanan.</li>
+                                <li>Setelah memilih tanggal dan layanan, klik tombol <strong>Export ke PDF</strong> atau
+                                    <strong>Export ke Excel</strong> sesuai kebutuhan Anda.
+                                </li>
+                                <li>File hasil export akan otomatis terunduh ke perangkat Anda dalam format yang
+                                    dipilih.</li>
+                            </ol>
+                            <p><strong>Catatan:</strong> Pastikan semua pilihan sudah benar sebelum menekan tombol
+                                export.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

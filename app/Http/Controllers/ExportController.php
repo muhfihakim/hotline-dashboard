@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\AduanLayanan;
 use Maatwebsite\Excel\Facades\Excel;
-use PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\AduanLayananExport;
 
 class ExportController extends Controller
@@ -19,8 +19,8 @@ class ExportController extends Controller
         if ($layanan !== 'aduan') {
             return back()->with('alert.config', json_encode([
                 'icon' => 'error',
-                'title' => 'Layanan belum didukung',
-                'text' => 'Saat ini hanya Aduan Layanan yang tersedia.',
+                'title' => 'Terjadi kesalahan',
+                'text' => 'Cek kembali data yang akan di export.',
             ]));
         }
 
@@ -30,7 +30,7 @@ class ExportController extends Controller
         $data = AduanLayanan::whereBetween('created_at', [$startDate, $endDate])->get();
 
         if ($format === 'pdf') {
-            $pdf = PDF::loadView('exports.aduan_pdf', compact('data', 'startDate', 'endDate'));
+            $pdf = Pdf::loadView('exports.aduan_pdf', compact('data', 'startDate', 'endDate'));
             return $pdf->download('aduan-layanan.pdf');
         } elseif ($format === 'excel') {
             return Excel::download(new AduanLayananExport($data), 'aduan-layanan.xlsx');

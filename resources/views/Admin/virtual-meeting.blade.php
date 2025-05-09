@@ -61,7 +61,7 @@
                                     <td class="text-center align-middle">
                                         <a href="https://wa.me/{{ $nomor }}" target="_blank"
                                             class="btn btn-success btn-sm">
-                                            <i class="fab fa-whatsapp"></i> Chat
+                                            <i class="bi bi-whatsapp"></i> Chat
                                         </a>
                                     </td>
                                     <td class="text-center align-middle">{{ $item->instansi }}</td>
