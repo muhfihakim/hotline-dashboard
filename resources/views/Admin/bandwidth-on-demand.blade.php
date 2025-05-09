@@ -37,49 +37,44 @@
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Tiket</th>
-                                <th>Nama Lengkap</th>
-                                <th>No. Pemohon</th>
-                                <th>Instansi</th>
-                                <th>Peruntukan</th>
-                                <th>Lokasi</th>
-                                <th>Surat</th>
-                                <th>Status</th>
-                                <th>Waktu Permohonan</th>
+                                <th class="text-center align-middle">Tiket</th>
+                                <th class="text-center align-middle">Nama Lengkap</th>
+                                <th class="text-center align-middle">No. Pemohon</th>
+                                <th class="text-center align-middle">Instansi</th>
+                                <th class="text-center align-middle">Peruntukan</th>
+                                <th class="text-center align-middle">Lokasi</th>
+                                <th class="text-center align-middle">Surat</th>
+                                <th class="text-center align-middle">Status</th>
+                                <th class="text-center align-middle">Waktu Permohonan</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($bod as $index => $item)
                                 <tr>
-                                    <td>{{ $item->nomor_tiket }}</td>
-                                    <td>{{ $item->nama_lengkap }}</td>
-                                    <td>{{ $item->user_id }}</td>
-                                    <td>{{ $item->instansi }}</td>
-                                    <td>{{ $item->jenis_koneksi_peruntukan }}</td>
-                                    <td>{{ $item->lokasi }}</td>
-                                    {{-- <td>
-                                        @if ($item->surat_permohonan)
-                                            @php
-                                                // Ambil hanya nama file dari path lengkap
-                                                $fileName = basename($item->surat_permohonan);
-                                            @endphp
-                                            <a href="{{ url('/uploads/' . $fileName) }}" target="_blank">
-                                                Lihat Surat
-                                            </a>
-                                        @else
-                                            Tidak Ada File
-                                        @endif
-                                    </td> --}}
-                                    <td>
+                                    <td class="text-center align-middle">{{ $item->nomor_tiket }}</td>
+                                    <td class="text-center align-middle">{{ $item->nama_lengkap }}</td>
+                                    @php
+                                        $nomor = str_replace('@c.us', '', $item->user_id);
+                                    @endphp
+                                    <td class="text-center align-middle">
+                                        <a href="https://wa.me/{{ $nomor }}" target="_blank"
+                                            class="btn btn-success btn-sm">
+                                            <i class="fab fa-whatsapp"></i> Chat
+                                        </a>
+                                    </td>
+                                    <td class="text-center align-middle">{{ $item->instansi }}</td>
+                                    <td class="text-center align-middle">{{ $item->jenis_koneksi_peruntukan }}</td>
+                                    <td class="text-center align-middle">{{ $item->lokasi }}</td>
+                                    <td class="text-center align-middle">
                                         @if ($item->surat_permohonan)
                                             @php $fileName = basename($item->surat_permohonan); @endphp
                                             <button type="button" class="btn btn-primary btn-sm"
                                                 onclick="handleSurat('{{ $item->id }}', '{{ url('/uploads/' . $fileName) }}')">
-                                                Lihat Surat
+                                                <i class="bi bi-eye"></i>
                                             </button>
                                         @endif
                                     </td>
-                                    <td>
+                                    <td class="text-center align-middle">
                                         <form action="{{ route('update.bod.admin', $item->id) }}" method="POST">
                                             @csrf
                                             @method('PATCH')
@@ -91,7 +86,8 @@
                                             </select>
                                         </form>
                                     </td>
-                                    <td>{{ optional($item->created_at)->format('d-m-Y H:i') ?? '-' }}</td>
+                                    <td class="text-center align-middle">
+                                        {{ optional($item->created_at)->format('d-m-Y H:i') ?? '-' }}</td>
                                 </tr>
                                 @if ($item->surat_permohonan)
                                     @php $fileName = basename($item->surat_permohonan); @endphp

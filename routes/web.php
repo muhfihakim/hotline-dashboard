@@ -3,7 +3,9 @@
 use App\Http\Controllers\AduanLayananController;
 use App\Http\Controllers\BandwidthOnDemandController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\InfrastrukturController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PentestingController;
 use App\Http\Controllers\ResetEmailController;
 use App\Http\Controllers\SesiController;
@@ -51,6 +53,8 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/reset-email/{id}/update-status', [ResetEmailController::class, 'update'])->name('update.resetemail.admin')->middleware('userAkses:admin');
     Route::get('/pentesting', [PentestingController::class, 'index'])->name('index.pentest.admin')->middleware('userAkses:admin');
     Route::patch('/pentesting/{id}/update-status', [PentestingController::class, 'update'])->name('update.pentest.admin')->middleware('userAkses:admin');
+    Route::get('/laporan-rekap', [LaporanController::class, 'index'])->name('index.rekap')->middleware('userAkses:admin');
+    Route::get('/export/aduan-layanan', [ExportController::class, 'exportAduanLayanan'])->name('export.aduan');
 
     Route::post('/logout', [SesiController::class, 'logout'])->name('aksi.logout');
 });

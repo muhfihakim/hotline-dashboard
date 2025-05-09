@@ -55,7 +55,15 @@
                                 <tr>
                                     <td class="text-center align-middle">{{ $item->nomor_tiket }}</td>
                                     <td class="text-center align-middle">{{ $item->nama_lengkap }}</td>
-                                    <td class="text-center align-middle">{{ $item->user_id }}</td>
+                                    @php
+                                        $nomor = str_replace('@c.us', '', $item->user_id);
+                                    @endphp
+                                    <td class="text-center align-middle">
+                                        <a href="https://wa.me/{{ $nomor }}" target="_blank"
+                                            class="btn btn-success btn-sm">
+                                            <i class="fab fa-whatsapp"></i> Chat
+                                        </a>
+                                    </td>
                                     <td class="text-center align-middle">{{ $item->instansi }}</td>
                                     <td class="text-center align-middle">{{ $item->waktu_pelaksanaan }}</td>
                                     <td class="text-center align-middle">{{ $item->jumlah_partisipan }}</td>
@@ -67,7 +75,7 @@
                                             @php $fileName = basename($item->surat_permohonan); @endphp
                                             <button type="button" class="btn btn-primary btn-sm"
                                                 onclick="handleSurat('{{ $item->id }}', '{{ url('/uploads/' . $fileName) }}')">
-                                                Lihat Surat
+                                                <i class="bi bi-eye"></i>
                                             </button>
                                         @endif
                                     </td>

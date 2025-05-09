@@ -49,8 +49,17 @@
                             @foreach ($aduan as $index => $item)
                                 <tr>
                                     <td class="text-center align-middle">{{ $item->nomor_tiket }}</td>
-                                    <td class="text-center align-middle">{{ $item->user_id }}</td>
                                     <td class="text-center align-middle">{{ $item->nama_lengkap }}</td>
+                                    @php
+                                        $nomor = str_replace('@c.us', '', $item->user_id);
+                                    @endphp
+                                    <td class="text-center align-middle">
+                                        <a href="https://wa.me/{{ $nomor }}" target="_blank"
+                                            class="btn btn-success btn-sm">
+                                            <i class="fab fa-whatsapp"></i> Chat
+                                        </a>
+                                    </td>
+
                                     <td class="text-center align-middle">{{ $item->instansi }}</td>
                                     <td class="text-center align-middle">{{ $item->isi_aduan }}</td>
                                     <td class="text-center align-middle">

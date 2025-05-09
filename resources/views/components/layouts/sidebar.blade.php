@@ -25,6 +25,7 @@
                          <p>Dashboard</p>
                      </a>
                  </li>
+                 <li class="nav-header">LAYANAN</li>
                  <li class="nav-item">
                      <a href="{{ route('index.aduan.admin') }}"
                          class="nav-link {{ Request::is('aduan-layanan') ? 'active' : '' }}">
@@ -79,6 +80,14 @@
                          class="nav-link {{ Request::is('tanda-tangan-elektronik') ? 'active' : '' }}">
                          <i class="nav-icon bi bi-file-earmark-check"></i>
                          <p>TTE</p>
+                     </a>
+                 </li>
+                 <li class="nav-header">LAPORAN</li>
+                 <li class="nav-item">
+                     <a href="{{ route('index.rekap') }}"
+                         class="nav-link {{ Request::is('laporan-rekap') ? 'active' : '' }}">
+                         <i class="nav-icon bi bi-file-earmark-bar-graph"></i>
+                         <p>Rekap</p>
                      </a>
                  </li>
              </ul>
