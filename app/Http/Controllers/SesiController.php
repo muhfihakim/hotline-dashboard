@@ -38,7 +38,15 @@ class SesiController extends Controller
                 return redirect('/kepala-bidang');
             }
         } else {
-            return redirect()->route('login')->withErrors(['message' => 'Email dan Password tidak sesuai.'])->withInput();
+            // return redirect()->route('login')->withErrors(['message' => 'Email dan Password tidak sesuai.'])->withInput();
+            return redirect()->route('login')->with([
+                'alert.config' => json_encode([
+                    'icon' => 'error',
+                    'title' => 'Gagal Masuk',
+                    'text' => 'Email dan Password tidak sesuai.',
+                    'showConfirmButton' => true,
+                ])
+            ])->withInput();
         }
     }
 

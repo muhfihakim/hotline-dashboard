@@ -27,7 +27,7 @@
             <!--end::Container-->
         </div>
         <div class="app-content">
-            <div class="card">
+            <div class="card card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Daftar Aduan Layanan</h3>
                 </div>
@@ -59,7 +59,6 @@
                                             <i class="fab fa-whatsapp"></i> Chat
                                         </a>
                                     </td>
-
                                     <td class="text-center align-middle">{{ $item->instansi }}</td>
                                     <td class="text-center align-middle">{{ $item->isi_aduan }}</td>
                                     <td class="text-center align-middle">

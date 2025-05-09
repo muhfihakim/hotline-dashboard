@@ -54,7 +54,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pentesting', [PentestingController::class, 'index'])->name('index.pentest.admin')->middleware('userAkses:admin');
     Route::patch('/pentesting/{id}/update-status', [PentestingController::class, 'update'])->name('update.pentest.admin')->middleware('userAkses:admin');
     Route::get('/laporan-rekap', [LaporanController::class, 'index'])->name('index.rekap')->middleware('userAkses:admin');
-    Route::get('/export/aduan-layanan', [ExportController::class, 'exportAduanLayanan'])->name('export.aduan');
+    Route::get('/export/layanan', [ExportController::class, 'exportLayanan'])->name('export.layanan');
+
+
 
     Route::post('/logout', [SesiController::class, 'logout'])->name('aksi.logout');
 });
