@@ -53,14 +53,33 @@
                                     @php
                                         $nomor = str_replace('@c.us', '', $item->user_id);
                                     @endphp
+
                                     <td class="text-center align-middle">
-                                        <a href="https://wa.me/{{ $nomor }}" target="_blank"
-                                            class="btn btn-success btn-sm">
-                                            <i class="fab fa-whatsapp"></i> Chat
-                                        </a>
+                                        @if (!empty($nomor))
+                                            <a href="https://wa.me/{{ $nomor }}" target="_blank"
+                                                class="btn btn-success btn-sm">
+                                                <i class="bi bi-whatsapp"></i> Chat
+                                            </a>
+                                        @else
+                                            <button class="btn btn-secondary btn-sm" disabled>
+                                                <i class="bi bi-whatsapp"></i> Tidak Ada
+                                            </button>
+                                        @endif
                                     </td>
                                     <td class="text-center align-middle">{{ $item->instansi }}</td>
-                                    <td class="text-center align-middle">{{ $item->isi_aduan }}</td>
+                                    @php
+                                        $excerpt = Str::limit($item->isi_aduan, 10); // Potong jadi 100 karakter
+                                    @endphp
+
+                                    <td class="text-center align-middle">
+                                        {{ Str::limit($item->isi_aduan, 100) }}
+                                        @if (Str::length($item->isi_aduan) > 100)
+                                            <button type="button" class="btn btn-link btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#modalAduan{{ $item->id }}">
+                                                Lihat Selengkapnya
+                                            </button>
+                                        @endif
+                                    </td>
                                     <td class="text-center align-middle">
                                         <form action="{{ route('update.aduan.admin', $item->id) }}" method="POST">
                                             @csrf
@@ -79,6 +98,26 @@
                             @endforeach
                         </tbody>
                     </table>
+                    @foreach ($aduan as $item)
+                        @if (Str::length($item->isi_aduan) > 100)
+                            <div class="modal fade" id="modalAduan{{ $item->id }}" tabindex="-1"
+                                aria-labelledby="modalLabel{{ $item->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalLabel{{ $item->id }}">Isi Aduan
+                                                Lengkap</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Tutup"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{ $item->isi_aduan }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
                 </div>
                 <!--end::App Content-->
             </div>
@@ -104,7 +143,7 @@
         <script src="{{ asset('dist/js/buttons.print.min.js') }}"></script>
         <script src="{{ asset('dist/js/buttons.colVis.min.js') }}"></script>
         <!-- AdminLTE App -->
-        <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
+        {{-- <script src="{{ asset('dist/js/adminlte.min.js') }}"></script> --}}
         <!-- Page specific script -->
         <script>
             $(function() {
@@ -112,8 +151,17 @@
                     "responsive": true,
                     "lengthChange": false,
                     "autoWidth": false,
-                    "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+                    "buttons": [{
+                        extend: 'colvis',
+                        text: 'Tampilkan/Kolom'
+                    }],
+                    "language": {
+                        "buttons": {
+                            "colvis": "Tampilkan/Kolom"
+                        }
+                    }
                 }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
                 $('#example2').DataTable({
                     "paging": true,
                     "lengthChange": false,

@@ -15,17 +15,6 @@ use App\Http\Controllers\VirtualPrivateServerController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Routing\Controllers\Middleware;
 
-// Route::get('/', function () {
-//     return view('home');
-// });
-
-// Route::get('/aduan-layanan', function () {
-//     return view('aduan-layanan');
-// });
-
-// Route::get('/login', function () {
-//     return view('login');
-// });
 
 Route::middleware(['guest'])->group(function () {
     Route::get('/', [SesiController::class, 'index'])->name('login');
@@ -55,8 +44,9 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/pentesting/{id}/update-status', [PentestingController::class, 'update'])->name('update.pentest.admin')->middleware('userAkses:admin');
     Route::get('/laporan-rekap', [LaporanController::class, 'index'])->name('index.rekap')->middleware('userAkses:admin');
     Route::get('/export/layanan', [ExportController::class, 'exportLayanan'])->name('export.layanan');
-
-
+    Route::get('/test', function () {
+        return view('Admin.modal');
+    });
 
     Route::post('/logout', [SesiController::class, 'logout'])->name('aksi.logout');
 });

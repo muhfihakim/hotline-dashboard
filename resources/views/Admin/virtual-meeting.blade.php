@@ -27,7 +27,7 @@
             <!--end::Container-->
         </div>
         <div class="app-content">
-            <div class="card">
+            <div class="card card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Daftar Permohonan Virtual Meeting</h3>
                 </div>
@@ -47,7 +47,6 @@
                                 <th class="text-center align-middle">Fasilitas</th>
                                 <th class="text-center align-middle">Surat</th>
                                 <th class="text-center align-middle">Status</th>
-                                <th class="text-center align-middle">Waktu Permohonan</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -55,14 +54,18 @@
                                 <tr>
                                     <td class="text-center align-middle">{{ $item->nomor_tiket }}</td>
                                     <td class="text-center align-middle">{{ $item->nama_lengkap }}</td>
-                                    @php
-                                        $nomor = str_replace('@c.us', '', $item->user_id);
-                                    @endphp
+                                    @php $nomor = str_replace('@c.us', '', $item->user_id); @endphp
                                     <td class="text-center align-middle">
-                                        <a href="https://wa.me/{{ $nomor }}" target="_blank"
-                                            class="btn btn-success btn-sm">
-                                            <i class="bi bi-whatsapp"></i> Chat
-                                        </a>
+                                        @if (!empty($nomor))
+                                            <a href="https://wa.me/{{ $nomor }}" target="_blank"
+                                                class="btn btn-success btn-sm">
+                                                <i class="bi bi-whatsapp"></i> Chat
+                                            </a>
+                                        @else
+                                            <button class="btn btn-secondary btn-sm" disabled>
+                                                <i class="bi bi-whatsapp"></i> Tidak Ada
+                                            </button>
+                                        @endif
                                     </td>
                                     <td class="text-center align-middle">{{ $item->instansi }}</td>
                                     <td class="text-center align-middle">{{ $item->waktu_pelaksanaan }}</td>
@@ -72,14 +75,12 @@
                                     <td class="text-center align-middle">{{ $item->link_operator }}</td>
                                     <td class="text-center align-middle">
                                         @if ($item->surat_permohonan)
-                                            @php $fileName = basename($item->surat_permohonan); @endphp
-                                            <button type="button" class="btn btn-primary btn-sm"
-                                                onclick="handleSurat('{{ $item->id }}', '{{ url('/uploads/' . $fileName) }}')">
+                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#modalSurat{{ $item->id }}">
                                                 <i class="bi bi-eye"></i>
                                             </button>
                                         @endif
                                     </td>
-
                                     <td class="text-center align-middle">
                                         <form action="{{ route('update.vm.admin', $item->id) }}" method="POST">
                                             @csrf
@@ -93,34 +94,36 @@
                                         </form>
                                     </td>
                                     <td class="text-center align-middle">
-                                        {{ optional($item->created_at)->format('H:i | d-m-Y') ?? '-' }}</td>
+                                        {{ optional($item->created_at)->format('H:i | d-m-Y') }}</td>
                                 </tr>
-                                @if ($item->surat_permohonan)
-                                    @php $fileName = basename($item->surat_permohonan); @endphp
-
-                                    <div class="modal fade" id="modalSurat{{ $item->id }}" tabindex="-1"
-                                        role="dialog" aria-labelledby="modalLabel{{ $item->id }}"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Surat Permohonan</h5>
-                                                </div>
-                                                <div class="modal-body p-2">
-                                                    <iframe src="{{ url('/uploads/' . $fileName) }}" width="100%"
-                                                        height="500px" style="border: none;"></iframe>
-                                                </div>
-                                                <div class="modal-footer justify-content-between">
-                                                    <button type="button" class="btn btn-default"
-                                                        data-dismiss="modal">Tutup</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
                             @endforeach
                         </tbody>
                     </table>
+                    @foreach ($vm as $item)
+                        @if ($item->surat_permohonan)
+                            @php $fileName = basename($item->surat_permohonan); @endphp
+                            <div class="modal fade" id="modalSurat{{ $item->id }}" tabindex="-1"
+                                aria-labelledby="modalLabel{{ $item->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Surat Permohonan</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Tutup"></button>
+                                        </div>
+                                        <div class="modal-body p-2">
+                                            <iframe src="{{ url('/uploads/' . $fileName) }}" width="100%"
+                                                height="500px" style="border: none;"></iframe>
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Tutup</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
                 </div>
                 <!--end::App Content-->
             </div>
@@ -139,14 +142,9 @@
         <script src="{{ asset('dist/js/responsive.bootstrap4.min.js') }}"></script>
         <script src="{{ asset('dist/js/dataTables.buttons.min.js') }}"></script>
         <script src="{{ asset('dist/js/buttons.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('dist/js/jszip.min.js') }}"></script>
-        <script src="{{ asset('dist/js/pdfmake.min.js') }}"></script>
-        <script src="{{ asset('dist/js/vfs_fonts.js') }}"></script>
-        <script src="{{ asset('dist/js/buttons.html5.min.js') }}"></script>
-        <script src="{{ asset('dist/js/buttons.print.min.js') }}"></script>
         <script src="{{ asset('dist/js/buttons.colVis.min.js') }}"></script>
         <!-- AdminLTE App -->
-        <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
+        {{-- <script src="{{ asset('dist/js/adminlte.min.js') }}"></script> --}}
         <!-- Page specific script -->
         <script>
             $(function() {
@@ -154,8 +152,17 @@
                     "responsive": true,
                     "lengthChange": false,
                     "autoWidth": false,
-                    "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+                    "buttons": [{
+                        extend: 'colvis',
+                        text: 'Tampilkan/Kolom'
+                    }],
+                    "language": {
+                        "buttons": {
+                            "colvis": "Tampilkan/Kolom"
+                        }
+                    }
                 }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
                 $('#example2').DataTable({
                     "paging": true,
                     "lengthChange": false,
@@ -177,7 +184,7 @@
             </script>
         @endif
     @endsection
-    <script>
+    {{-- <script>
         function handleSurat(id, url) {
             const isMobile = window.innerWidth < 768; // You can adjust breakpoint here
 
@@ -196,5 +203,5 @@
                 $('#modalSurat' + id).modal('show');
             }
         }
-    </script>
+    </script> --}}
 </x-layouts.app>

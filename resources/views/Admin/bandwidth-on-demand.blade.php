@@ -28,7 +28,7 @@
             <!--end::Container-->
         </div>
         <div class="app-content">
-            <div class="card">
+            <div class="card card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Daftar Permohonan Bandwidth on Demand(BOD)</h3>
                 </div>
@@ -56,11 +56,18 @@
                                     @php
                                         $nomor = str_replace('@c.us', '', $item->user_id);
                                     @endphp
+
                                     <td class="text-center align-middle">
-                                        <a href="https://wa.me/{{ $nomor }}" target="_blank"
-                                            class="btn btn-success btn-sm">
-                                            <i class="bi bi-whatsapp"></i> Chat
-                                        </a>
+                                        @if (!empty($nomor))
+                                            <a href="https://wa.me/{{ $nomor }}" target="_blank"
+                                                class="btn btn-success btn-sm">
+                                                <i class="bi bi-whatsapp"></i> Chat
+                                            </a>
+                                        @else
+                                            <button class="btn btn-secondary btn-sm" disabled>
+                                                <i class="bi bi-whatsapp"></i> Tidak Ada
+                                            </button>
+                                        @endif
                                     </td>
                                     <td class="text-center align-middle">{{ $item->instansi }}</td>
                                     <td class="text-center align-middle">{{ $item->jenis_koneksi_peruntukan }}</td>
@@ -140,7 +147,7 @@
         <script src="{{ asset('dist/js/buttons.print.min.js') }}"></script>
         <script src="{{ asset('dist/js/buttons.colVis.min.js') }}"></script>
         <!-- AdminLTE App -->
-        <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
+        {{-- <script src="{{ asset('dist/js/adminlte.min.js') }}"></script> --}}
         <!-- Page specific script -->
         <script>
             $(function() {
@@ -148,8 +155,17 @@
                     "responsive": true,
                     "lengthChange": false,
                     "autoWidth": false,
-                    "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+                    "buttons": [{
+                        extend: 'colvis',
+                        text: 'Tampilkan/Kolom'
+                    }],
+                    "language": {
+                        "buttons": {
+                            "colvis": "Tampilkan/Kolom"
+                        }
+                    }
                 }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
                 $('#example2').DataTable({
                     "paging": true,
                     "lengthChange": false,
