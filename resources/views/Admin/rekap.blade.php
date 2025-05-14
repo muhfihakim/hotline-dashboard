@@ -56,6 +56,10 @@
                                         <option value="virtualmeeting">Virtual Meeting</option>
                                         <option value="vps">Virtual Private Server</option>
                                         <option value="bod">Bandwidth On Demand</option>
+                                        <option value="infrastruktur">Infrastruktur Baru</option>
+                                        <option value="email">Layanan Email</option>
+                                        <option value="pentest">Pen-Testing</option>
+                                        <option value="tte">Tanda Tangan Elektronik</option>
                                         <!-- Tambah opsi lain di masa depan -->
                                     </select>
                                 </div>

@@ -4,11 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AduanLayanan;
+use App\Models\BandwidthOnDemand;
+use App\Models\Infrastruktur;
+use App\Models\Pentest;
+use App\Models\ResetEmail;
+use App\Models\TandaTanganElektronik;
 use App\Models\VirtualMeeting;
 use App\Models\VirtualPrivateServer;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\AduanLayananExport;
+use App\Exports\BandwidthOnDemandExport;
+use App\Exports\InfrastrukturBaruExport;
+use App\Exports\LayananEmailExport;
+use App\Exports\PenTestingExport;
+use App\Exports\TTEExport;
 use App\Exports\VirtualMeetingExport;
 use App\Exports\VirtualPrivateServerExport;
 
@@ -61,6 +71,57 @@ class ExportController extends Controller
                     return Excel::download(new VirtualPrivateServerExport($data), 'virtual-private-server.xlsx');
                 }
                 break;
+
+            case 'bod':
+                $data = BandwidthOnDemand::whereBetween('created_at', [$startDate, $endDate])->get();
+                if ($format === 'pdf') {
+                    $pdf = Pdf::loadView('exports.bod_pdf', compact('data', 'startDate', 'endDate'));
+                    return $pdf->download('bandwidth-on-demand.pdf');
+                } elseif ($format === 'excel') {
+                    return Excel::download(new BandwidthOnDemandExport($data), 'bandwidth-on-demand.xlsx');
+                }
+                break;
+
+            case 'infrastruktur':
+                $data = Infrastruktur::whereBetween('created_at', [$startDate, $endDate])->get();
+                if ($format === 'pdf') {
+                    $pdf = Pdf::loadView('exports.infrastruktur_pdf', compact('data', 'startDate', 'endDate'));
+                    return $pdf->download('infrastruktur-baru.pdf');
+                } elseif ($format === 'excel') {
+                    return Excel::download(new InfrastrukturBaruExport($data), 'infrastruktur-baru.xlsx');
+                }
+                break;
+
+            case 'email':
+                $data = ResetEmail::whereBetween('created_at', [$startDate, $endDate])->get();
+                if ($format === 'pdf') {
+                    $pdf = Pdf::loadView('exports.layanan_email_pdf', compact('data', 'startDate', 'endDate'));
+                    return $pdf->download('layanan-email.pdf');
+                } elseif ($format === 'excel') {
+                    return Excel::download(new LayananEmailExport($data), 'layanan-email.xlsx');
+                }
+                break;
+
+            case 'pentest':
+                $data = Pentest::whereBetween('created_at', [$startDate, $endDate])->get();
+                if ($format === 'pdf') {
+                    $pdf = Pdf::loadView('exports.pentesting_pdf', compact('data', 'startDate', 'endDate'));
+                    return $pdf->download('pentesting.pdf');
+                } elseif ($format === 'excel') {
+                    return Excel::download(new PenTestingExport($data), 'pentesting.xlsx');
+                }
+                break;
+
+            case 'tte':
+                $data = TandaTanganElektronik::whereBetween('created_at', [$startDate, $endDate])->get();
+                if ($format === 'pdf') {
+                    $pdf = Pdf::loadView('exports.tte_pdf', compact('data', 'startDate', 'endDate'));
+                    return $pdf->download('tte.pdf');
+                } elseif ($format === 'excel') {
+                    return Excel::download(new TTEExport($data), 'tte.xlsx');
+                }
+                break;
+
 
             default:
                 return back()->with('alert.config', json_encode([
