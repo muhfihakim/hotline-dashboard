@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\VirtualMeeting;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -19,25 +20,41 @@ class VirtualMeetingController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Validasi request
         $request->validate([
             'status' => 'required|in:0,1'
         ]);
 
         try {
-            // Cari virtual meeting berdasarkan ID dan update status
             $vm = VirtualMeeting::findOrFail($id);
             $vm->status = $request->status;
             $vm->save();
 
-            // Tampilkan SweetAlert sukses
-            Alert::success('Berhasil', 'Status tiket berhasil diperbarui.');
+            // Custom config for toast
+            $toast = [
+                'toast' => true,
+                'position' => 'top-end',
+                'icon' => 'success',
+                'title' => 'Status tiket berhasil diperbarui.',
+                'showConfirmButton' => false,
+                'timer' => 3000,
+                'timerProgressBar' => true
+            ];
+
+            Session::flash('alert.config', json_encode($toast));
         } catch (\Exception $e) {
-            // Tampilkan SweetAlert error jika terjadi kesalahan
-            Alert::error('Gagal', 'Terjadi kesalahan saat memperbarui status.');
+            $toast = [
+                'toast' => true,
+                'position' => 'top-end',
+                'icon' => 'error',
+                'title' => 'Gagal memperbarui status.',
+                'showConfirmButton' => false,
+                'timer' => 3000,
+                'timerProgressBar' => true
+            ];
+
+            Session::flash('alert.config', json_encode($toast));
         }
 
-        // Redirect kembali ke halaman sebelumnya
         return redirect()->back();
     }
 }

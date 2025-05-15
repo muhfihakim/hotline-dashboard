@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BandwidthOnDemand;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Session;
 
 class BandwidthOnDemandController extends Controller
 {
@@ -19,7 +20,6 @@ class BandwidthOnDemandController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Validasi request
         $request->validate([
             'status' => 'required|in:0,1'
         ]);
@@ -30,14 +30,32 @@ class BandwidthOnDemandController extends Controller
             $bod->status = $request->status;
             $bod->save();
 
-            // Tampilkan SweetAlert sukses
-            Alert::success('Berhasil', 'Status tiket berhasil diperbarui.');
+            // Custom config for toast
+            $toast = [
+                'toast' => true,
+                'position' => 'top-end',
+                'icon' => 'success',
+                'title' => 'Status tiket berhasil diperbarui.',
+                'showConfirmButton' => false,
+                'timer' => 3000,
+                'timerProgressBar' => true
+            ];
+
+            Session::flash('alert.config', json_encode($toast));
         } catch (\Exception $e) {
-            // Tampilkan SweetAlert error jika terjadi kesalahan
-            Alert::error('Gagal', 'Terjadi kesalahan saat memperbarui status.');
+            $toast = [
+                'toast' => true,
+                'position' => 'top-end',
+                'icon' => 'error',
+                'title' => 'Gagal memperbarui status.',
+                'showConfirmButton' => false,
+                'timer' => 3000,
+                'timerProgressBar' => true
+            ];
+
+            Session::flash('alert.config', json_encode($toast));
         }
 
-        // Redirect kembali ke halaman sebelumnya
         return redirect()->back();
     }
 }

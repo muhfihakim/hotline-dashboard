@@ -153,7 +153,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    @foreach ($latestData as $index => $data)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $data['tiket'] }}</td>
+                                            <td>{{ $data['kategori'] }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($data['waktu'])->format('d-m-Y H:i') }}</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

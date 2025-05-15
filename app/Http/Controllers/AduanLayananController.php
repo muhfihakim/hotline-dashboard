@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AduanLayanan;
+use Illuminate\Support\Facades\Session;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class AduanLayananController extends Controller
@@ -17,27 +18,67 @@ class AduanLayananController extends Controller
         return view('Admin.aduan-layanan', compact('aduan'));
     }
 
+    // public function update(Request $request, $id)
+    // {
+    //     // Validasi request
+    //     $request->validate([
+    //         'status' => 'required|in:0,1'
+    //     ]);
+
+    //     try {
+    //         // Cari aduan berdasarkan ID dan update status
+    //         $aduan = AduanLayanan::findOrFail($id);
+    //         $aduan->status = $request->status;
+    //         $aduan->save();
+
+    //         // Tampilkan SweetAlert sukses
+    //         Alert::success('Berhasil', 'Status tiket berhasil diperbarui.');
+    //     } catch (\Exception $e) {
+    //         // Tampilkan SweetAlert error jika terjadi kesalahan
+    //         Alert::error('Gagal', 'Terjadi kesalahan saat memperbarui status.');
+    //     }
+
+    //     // Redirect kembali ke halaman sebelumnya
+    //     return redirect()->back();
+    // }
+
     public function update(Request $request, $id)
     {
-        // Validasi request
         $request->validate([
             'status' => 'required|in:0,1'
         ]);
 
         try {
-            // Cari aduan berdasarkan ID dan update status
             $aduan = AduanLayanan::findOrFail($id);
             $aduan->status = $request->status;
             $aduan->save();
 
-            // Tampilkan SweetAlert sukses
-            Alert::success('Berhasil', 'Status tiket berhasil diperbarui.');
+            // Custom config for toast
+            $toast = [
+                'toast' => true,
+                'position' => 'top-end',
+                'icon' => 'success',
+                'title' => 'Status tiket berhasil diperbarui.',
+                'showConfirmButton' => false,
+                'timer' => 3000,
+                'timerProgressBar' => true
+            ];
+
+            Session::flash('alert.config', json_encode($toast));
         } catch (\Exception $e) {
-            // Tampilkan SweetAlert error jika terjadi kesalahan
-            Alert::error('Gagal', 'Terjadi kesalahan saat memperbarui status.');
+            $toast = [
+                'toast' => true,
+                'position' => 'top-end',
+                'icon' => 'error',
+                'title' => 'Gagal memperbarui status.',
+                'showConfirmButton' => false,
+                'timer' => 3000,
+                'timerProgressBar' => true
+            ];
+
+            Session::flash('alert.config', json_encode($toast));
         }
 
-        // Redirect kembali ke halaman sebelumnya
         return redirect()->back();
     }
 }

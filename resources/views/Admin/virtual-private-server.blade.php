@@ -37,13 +37,13 @@
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th class="text-center align-middle">Tiket</th>
-                                <th class="text-center align-middle">Nama Lengkap</th>
-                                <th class="text-center align-middle">No. Pemohon</th>
-                                <th class="text-center align-middle">Instansi</th>
-                                <th class="text-center align-middle">Surat</th>
-                                <th class="text-center align-middle">Status</th>
-                                <th class="text-center align-middle">Waktu Permohonan</th>
+                                <th class="text-center align-middle" style="width: 100px;">Tiket</th>
+                                <th class="text-center align-middle" style="width: 190px;">Nama Lengkap</th>
+                                <th class="text-center align-middle" style="width: 180px;">Instansi</th>
+                                <th class="text-center align-middle" style="width: 70px;">Surat</th>
+                                <th class="text-center align-middle" style="width: 70px;">Status</th>
+                                <th class="text-center align-middle" style="width: 70px;">No. Pemohon</th>
+                                <th class="text-center align-middle" style="width: 90px;">Waktu Permohonan</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,10 +51,45 @@
                                 <tr>
                                     <td class="text-center align-middle">{{ $item->nomor_tiket }}</td>
                                     <td class="text-center align-middle">{{ $item->nama_lengkap }}</td>
+                                    <td class="text-center align-middle">{{ $item->instansi }}</td>
+                                    <td class="text-center align-middle">
+                                        @if ($item->surat_permohonan)
+                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#modalSurat{{ $item->id }}">
+                                                <i class="bi bi-eye"></i> Lihat
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                                <i class="bi bi-eye-slash"></i> Tidak Ada
+                                            </button>
+                                        @endif
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <form action="{{ route('update.vps.admin', $item->id) }}" method="POST"
+                                            id="statusForm{{ $item->id }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status" id="statusInput{{ $item->id }}">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-info btn-sm">
+                                                    {{ $item->status == '1' ? 'Closed' : 'Open' }}
+                                                </button>
+                                                <button type="button"
+                                                    class="btn btn-info btn-sm dropdown-toggle dropdown-icon"
+                                                    data-toggle="dropdown">
+                                                </button>
+                                                <div class="dropdown-menu" role="menu">
+                                                    <a class="dropdown-item" href="#"
+                                                        onclick="submitStatus('{{ $item->id }}', '0')">Open</a>
+                                                    <a class="dropdown-item" href="#"
+                                                        onclick="submitStatus('{{ $item->id }}', '1')">Closed</a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </td>
                                     @php
                                         $nomor = str_replace('@c.us', '', $item->user_id);
                                     @endphp
-
                                     <td class="text-center align-middle">
                                         @if (!empty($nomor))
                                             <a href="https://wa.me/{{ $nomor }}" target="_blank"
@@ -67,57 +102,38 @@
                                             </button>
                                         @endif
                                     </td>
-                                    <td class="text-center align-middle">{{ $item->instansi }}</td>
-                                    <td class="text-center align-middle">
-                                        @if ($item->surat_permohonan)
-                                            @php $fileName = basename($item->surat_permohonan); @endphp
-                                            <button type="button" class="btn btn-primary btn-sm"
-                                                onclick="handleSurat('{{ $item->id }}', '{{ url('/uploads/' . $fileName) }}')">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                        @endif
-                                    </td>
-                                    <td class="text-center align-middle">
-                                        <form action="{{ route('update.vps.admin', $item->id) }}" method="POST">
-                                            @csrf
-                                            @method('PATCH')
-                                            <select name="status" onchange="this.form.submit()">
-                                                <option value="0" {{ $item->status == '0' ? 'selected' : '' }}>
-                                                    Open</option>
-                                                <option value="1" {{ $item->status == '1' ? 'selected' : '' }}>
-                                                    Closed</option>
-                                            </select>
-                                        </form>
-                                    </td>
                                     <td class="text-center align-middle">
                                         {{ optional($item->created_at)->format('H:i | d-m-Y') ?? '-' }}</td>
                                 </tr>
-                                @if ($item->surat_permohonan)
-                                    @php $fileName = basename($item->surat_permohonan); @endphp
-
-                                    <div class="modal fade" id="modalSurat{{ $item->id }}" tabindex="-1"
-                                        role="dialog" aria-labelledby="modalLabel{{ $item->id }}"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Surat Permohonan</h5>
-                                                </div>
-                                                <div class="modal-body p-2">
-                                                    <iframe src="{{ url('/uploads/' . $fileName) }}" width="100%"
-                                                        height="500px" style="border: none;"></iframe>
-                                                </div>
-                                                <div class="modal-footer justify-content-between">
-                                                    <button type="button" class="btn btn-default"
-                                                        data-dismiss="modal">Tutup</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
                             @endforeach
                         </tbody>
                     </table>
+                    @foreach ($vps as $item)
+                        {{-- Modal Surat Permohonan --}}
+                        @if ($item->surat_permohonan)
+                            @php $fileName = basename($item->surat_permohonan); @endphp
+                            <div class="modal fade" id="modalSurat{{ $item->id }}" tabindex="-1"
+                                aria-labelledby="modalLabel{{ $item->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Surat Permohonan</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Tutup"></button>
+                                        </div>
+                                        <div class="modal-body p-2">
+                                            <iframe src="{{ url('/uploads/' . $fileName) }}" width="100%"
+                                                height="500px" style="border: none;"></iframe>
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Tutup</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
                 </div>
                 <!--end::App Content-->
             </div>
@@ -136,14 +152,14 @@
         <script src="{{ asset('dist/js/responsive.bootstrap4.min.js') }}"></script>
         <script src="{{ asset('dist/js/dataTables.buttons.min.js') }}"></script>
         <script src="{{ asset('dist/js/buttons.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('dist/js/jszip.min.js') }}"></script>
-        <script src="{{ asset('dist/js/pdfmake.min.js') }}"></script>
-        <script src="{{ asset('dist/js/vfs_fonts.js') }}"></script>
-        <script src="{{ asset('dist/js/buttons.html5.min.js') }}"></script>
-        <script src="{{ asset('dist/js/buttons.print.min.js') }}"></script>
         <script src="{{ asset('dist/js/buttons.colVis.min.js') }}"></script>
         <!-- AdminLTE App -->
-        {{-- <script src="{{ asset('dist/js/adminlte.min.js') }}"></script> --}}
+        <script>
+            function submitStatus(id, statusValue) {
+                document.getElementById('statusInput' + id).value = statusValue;
+                document.getElementById('statusForm' + id).submit();
+            }
+        </script>
         <!-- Page specific script -->
         <script>
             $(function() {
@@ -176,31 +192,10 @@
         <!-- SweetAlert2 -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <!-- Tampilkan notifikasi jika ada session flash -->
         @if (session('alert.config'))
             <script>
                 Swal.fire({!! session('alert.config') !!});
             </script>
         @endif
     @endsection
-    <script>
-        function handleSurat(id, url) {
-            const isMobile = window.innerWidth < 768; // You can adjust breakpoint here
-
-            if (isMobile) {
-                // 👇 Option A: Buka tab baru
-                window.open(url, '_blank');
-
-                // 👇 Option B (langsung download): Buat anchor & klik otomatis
-                // let a = document.createElement('a');
-                // a.href = url;
-                // a.download = ''; // empty = gunakan nama file asli
-                // document.body.appendChild(a);
-                // a.click();
-                // document.body.removeChild(a);
-            } else {
-                $('#modalSurat' + id).modal('show');
-            }
-        }
-    </script>
 </x-layouts.app>

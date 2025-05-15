@@ -1,6 +1,5 @@
 <!doctype html>
-<html lang="en">
-<!--begin::Head-->
+<html lang="id">
 <x-layouts.header />
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">

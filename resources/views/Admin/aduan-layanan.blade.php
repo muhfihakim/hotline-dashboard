@@ -36,13 +36,14 @@
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th class="text-center align-middle">Tiket</th>
-                                <th class="text-center align-middle">Nama Lengkap</th>
-                                <th class="text-center align-middle">No. Pengadu</th>
-                                <th class="text-center align-middle">Instansi</th>
-                                <th class="text-center align-middle">Aduan</th>
-                                <th class="text-center align-middle">Status</th>
-                                <th class="text-center align-middle">Waktu Pengaduan</th>
+                                <th class="text-center align-middle" style="width: 100px;">Tiket</th>
+                                <th class="text-center align-middle" style="width: 190px;">Nama Lengkap</th>
+                                <th class="text-center align-middle" style="width: 180px;">Instansi</th>
+                                <th class="text-center align-middle" style="width: 150px;">Aduan</th>
+                                <th class="text-center align-middle" style="width: 70px;">Status</th>
+                                <th class="text-center align-middle" style="width: 70px;">No. Pengadu</th>
+                                <th class="text-center align-middle" style="width: 90px;">Waktu Pengaduan</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -50,6 +51,43 @@
                                 <tr>
                                     <td class="text-center align-middle">{{ $item->nomor_tiket }}</td>
                                     <td class="text-center align-middle">{{ $item->nama_lengkap }}</td>
+                                    <td class="text-center align-middle">{{ $item->instansi }}</td>
+                                    @php
+                                        $excerpt = Str::limit($item->isi_aduan, 7); // Potong jadi 100 karakter
+                                    @endphp
+
+                                    <td class="text-center align-middle">
+                                        {{ Str::limit($item->isi_aduan, 7) }}
+                                        @if (Str::length($item->isi_aduan) > 7)
+                                            <button type="button" class="btn btn-link btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#modalAduan{{ $item->id }}">
+                                                Lihat Selengkapnya
+                                            </button>
+                                        @endif
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <form action="{{ route('update.aduan.admin', $item->id) }}" method="POST"
+                                            id="statusForm{{ $item->id }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status" id="statusInput{{ $item->id }}">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-info btn-sm">
+                                                    {{ $item->status == '1' ? 'Closed' : 'Open' }}
+                                                </button>
+                                                <button type="button"
+                                                    class="btn btn-info btn-sm dropdown-toggle dropdown-icon"
+                                                    data-toggle="dropdown">
+                                                </button>
+                                                <div class="dropdown-menu" role="menu">
+                                                    <a class="dropdown-item" href="#"
+                                                        onclick="submitStatus('{{ $item->id }}', '0')">Open</a>
+                                                    <a class="dropdown-item" href="#"
+                                                        onclick="submitStatus('{{ $item->id }}', '1')">Closed</a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </td>
                                     @php
                                         $nomor = str_replace('@c.us', '', $item->user_id);
                                     @endphp
@@ -65,32 +103,6 @@
                                                 <i class="bi bi-whatsapp"></i> Tidak Ada
                                             </button>
                                         @endif
-                                    </td>
-                                    <td class="text-center align-middle">{{ $item->instansi }}</td>
-                                    @php
-                                        $excerpt = Str::limit($item->isi_aduan, 10); // Potong jadi 100 karakter
-                                    @endphp
-
-                                    <td class="text-center align-middle">
-                                        {{ Str::limit($item->isi_aduan, 100) }}
-                                        @if (Str::length($item->isi_aduan) > 100)
-                                            <button type="button" class="btn btn-link btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#modalAduan{{ $item->id }}">
-                                                Lihat Selengkapnya
-                                            </button>
-                                        @endif
-                                    </td>
-                                    <td class="text-center align-middle">
-                                        <form action="{{ route('update.aduan.admin', $item->id) }}" method="POST">
-                                            @csrf
-                                            @method('PATCH')
-                                            <select name="status" onchange="this.form.submit()">
-                                                <option value="0" {{ $item->status == '0' ? 'selected' : '' }}>
-                                                    Open</option>
-                                                <option value="1" {{ $item->status == '1' ? 'selected' : '' }}>
-                                                    Closed</option>
-                                            </select>
-                                        </form>
                                     </td>
                                     <td class="text-center align-middle">
                                         {{ optional($item->created_at)->format('H:i | d-m-Y') }}</td>
@@ -136,14 +148,14 @@
         <script src="{{ asset('dist/js/responsive.bootstrap4.min.js') }}"></script>
         <script src="{{ asset('dist/js/dataTables.buttons.min.js') }}"></script>
         <script src="{{ asset('dist/js/buttons.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('dist/js/jszip.min.js') }}"></script>
-        <script src="{{ asset('dist/js/pdfmake.min.js') }}"></script>
-        <script src="{{ asset('dist/js/vfs_fonts.js') }}"></script>
-        <script src="{{ asset('dist/js/buttons.html5.min.js') }}"></script>
-        <script src="{{ asset('dist/js/buttons.print.min.js') }}"></script>
         <script src="{{ asset('dist/js/buttons.colVis.min.js') }}"></script>
         <!-- AdminLTE App -->
-        {{-- <script src="{{ asset('dist/js/adminlte.min.js') }}"></script> --}}
+        <script>
+            function submitStatus(id, statusValue) {
+                document.getElementById('statusInput' + id).value = statusValue;
+                document.getElementById('statusForm' + id).submit();
+            }
+        </script>
         <!-- Page specific script -->
         <script>
             $(function() {
@@ -176,7 +188,6 @@
         <!-- SweetAlert2 -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <!-- Tampilkan notifikasi jika ada session flash -->
         @if (session('alert.config'))
             <script>
                 Swal.fire({!! session('alert.config') !!});

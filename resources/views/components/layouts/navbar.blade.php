@@ -26,7 +26,6 @@
                     <div class="dropdown-divider"></div>
                     <a href="#" class="dropdown-item">
                         <i class="bi bi-envelope me-2"></i>Dibuat oleh Tim Data Center.
-                        <span class="float-end text-secondary fs-7">1 menit</span>
                     </a>
                     <div class="dropdown-divider"></div>
                 </div>

@@ -47,6 +47,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/test', function () {
         return view('Admin.modal');
     });
+    Route::get('/test', function () {
+        return view('Admin.pengguna');
+    })->name('index.pengguna');
 
     Route::post('/logout', [SesiController::class, 'logout'])->name('aksi.logout');
 });

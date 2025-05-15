@@ -51,7 +51,7 @@
                                 <div class="form-group mb-3">
                                     <label for="layanan">Pilih Layanan:</label>
                                     <select class="form-control" name="layanan" id="layanan">
-                                        <option value="" disabled selected>Pilih layanan</option>
+                                        <option value="" disabled selected>Layanan Yang Akan Diexport</option>
                                         <option value="aduan">Aduan Layanan</option>
                                         <option value="virtualmeeting">Virtual Meeting</option>
                                         <option value="vps">Virtual Private Server</option>
@@ -63,10 +63,11 @@
                                         <!-- Tambah opsi lain di masa depan -->
                                     </select>
                                 </div>
-                                <button type="submit" name="format" value="pdf" class="btn btn-primary mt-3">Export
+                                <button type="submit" name="format" value="pdf"
+                                    class="btn btn-primary btn-sm mt-3">Export
                                     PDF</button>
                                 <button type="submit" name="format" value="excel"
-                                    class="btn btn-success mt-3 ml-2">Export Excel</button>
+                                    class="btn btn-success btn-sm mt-3 ml-2">Export Excel</button>
                             </form>
                         </div>
                     </div>

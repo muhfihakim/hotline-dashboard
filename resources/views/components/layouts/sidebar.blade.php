@@ -5,7 +5,8 @@
          <!--begin::Brand Link-->
          <a href="/" class="brand-link">
              <!--begin::Brand Image-->
-             <img src="../../dist/assets/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image opacity-75 shadow" />
+             <img src="{{ asset('dist/assets/img/Foto Profil Hotline.png') }}" alt="Logo Hotline Diskominfo Subang"
+                 class="brand-image opacity-100 shadow rounded-circle" />
              <!--end::Brand Image-->
              <!--begin::Brand Text-->
              <span class="brand-text fw-light">Layanan Hotline</span>
@@ -88,6 +89,14 @@
                          class="nav-link {{ Request::is('laporan-rekap') ? 'active' : '' }}">
                          <i class="nav-icon bi bi-file-earmark-bar-graph"></i>
                          <p>Rekap</p>
+                     </a>
+                 </li>
+                 <li class="nav-header">PENGGUNA</li>
+                 <li class="nav-item">
+                     <a href="{{ route('index.pengguna') }}"
+                         class="nav-link {{ Request::is('laporan-rekap') ? 'active' : '' }}">
+                         <i class="nav-icon bi bi-person-circle"></i>
+                         <p>Aplikasi</p>
                      </a>
                  </li>
              </ul>
