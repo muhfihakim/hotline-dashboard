@@ -94,7 +94,7 @@
                  <li class="nav-header">PENGGUNA</li>
                  <li class="nav-item">
                      <a href="{{ route('index.pengguna') }}"
-                         class="nav-link {{ Request::is('laporan-rekap') ? 'active' : '' }}">
+                         class="nav-link {{ Request::is('pengguna') ? 'active' : '' }}">
                          <i class="nav-icon bi bi-person-circle"></i>
                          <p>Aplikasi</p>
                      </a>

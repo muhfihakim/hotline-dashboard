@@ -47,9 +47,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/test', function () {
         return view('Admin.modal');
     });
-    Route::get('/test', function () {
+    Route::get('/pengguna', function () {
         return view('Admin.pengguna');
     })->name('index.pengguna');
+
+    Route::get('/pimpinan', [DashboardController::class, 'indexPimpinan'])->name('dashboard.pimpinan')->middleware('userAkses:pimpinan');
 
     Route::post('/logout', [SesiController::class, 'logout'])->name('aksi.logout');
 });
