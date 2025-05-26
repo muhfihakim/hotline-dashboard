@@ -87,4 +87,32 @@ class DashboardController extends Controller
             'latestData'
         ));
     }
+
+    // public function indexPimpinan()
+    // {
+    //     return view('Pimpinan.dash', [
+    //         'aduanLayanan' => AduanLayanan::all(),
+    //         'virtualMeeting' => VirtualMeeting::all(),
+    //         'vps' => VirtualPrivateServer::all(),
+    //         'bandwidth' => BandwidthOnDemand::all(),
+    //         'infrastruktur' => Infrastruktur::all(),
+    //         'resetEmail' => ResetEmail::all(),
+    //         'pentest' => Pentest::all(),
+    //         'tte' => TandaTanganElektronik::all(),
+    //     ]);
+    // }
+
+    public function indexPimpinan()
+    {
+        return view('Pimpinan.dash', [
+            'aduanLayanan' => \App\Models\AduanLayanan::all(),
+            'virtualMeeting' => \App\Models\VirtualMeeting::all(),
+            'vps' => \App\Models\VirtualPrivateServer::all(),
+            'bod' => \App\Models\BandwidthOnDemand::all(),
+            'infrastruktur' => \App\Models\Infrastruktur::all(),
+            'resetEmail' => \App\Models\ResetEmail::all(),
+            'pentest' => \App\Models\Pentest::all(),
+            'tte' => \App\Models\TandaTanganElektronik::all(),
+        ]);
+    }
 }

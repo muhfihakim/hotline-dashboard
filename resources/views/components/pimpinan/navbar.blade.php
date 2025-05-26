@@ -36,7 +36,7 @@
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                     <img src="{{ asset('dist/assets/img/Foto Profil Hotline.png') }}"
                         class="user-image rounded-circle shadow" alt="User Image" />
-                    <span class="d-none d-md-inline">Admin</span>
+                    <span class="d-none d-md-inline">Pimpinan</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                     <!--begin::User Image-->
@@ -44,7 +44,7 @@
                         <img src="{{ asset('dist/assets/img/Foto Profil Hotline.png') }}" class="rounded-circle shadow"
                             alt="User Image" />
                         <p>
-                            Admin
+                            Pimpinan
                             <small>Layanan Hotline Diskominfo Subang</small>
                         </p>
                     </li>

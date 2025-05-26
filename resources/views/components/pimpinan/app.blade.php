@@ -1,14 +1,14 @@
 <!doctype html>
 <html lang="id">
-<x-layouts.header />
+<x-pimpinan.header />
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
-        <x-layouts.navbar />
-        <x-layouts.sidebar />
+        <x-pimpinan.navbar />
+        <x-pimpinan.sidebar />
         {{ $slot }}
-        <x-layouts.footer />
+        <x-pimpinan.footer />
     </div>
     <!--end::App Wrapper-->
     <!--begin::Script-->
@@ -50,22 +50,6 @@
     <!-- OPTIONAL SCRIPTS -->
     @yield('Scripts')
     <!--end::Script-->
-    <script>
-        // Saat modal surat dibuka, baru load iframe
-        $('div.modal').on('show.bs.modal', function(e) {
-            let iframe = $(this).find('iframe.surat-frame');
-            let dataSrc = iframe.attr('data-src');
-            if (iframe.attr('src') !== dataSrc) {
-                iframe.attr('src', dataSrc);
-            }
-        });
-
-        // Opsional: Kosongkan src saat modal ditutup untuk menghemat memori
-        $('div.modal').on('hidden.bs.modal', function(e) {
-            let iframe = $(this).find('iframe.surat-frame');
-            iframe.removeAttr('src');
-        });
-    </script>
 </body>
 <!--end::Body-->
 

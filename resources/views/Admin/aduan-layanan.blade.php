@@ -43,7 +43,6 @@
                                 <th class="text-center align-middle" style="width: 70px;">Status</th>
                                 <th class="text-center align-middle" style="width: 70px;">No. Pengadu</th>
                                 <th class="text-center align-middle" style="width: 90px;">Waktu Pengaduan</th>
-
                             </tr>
                         </thead>
                         <tbody>
@@ -55,7 +54,6 @@
                                     @php
                                         $excerpt = Str::limit($item->isi_aduan, 7); // Potong jadi 100 karakter
                                     @endphp
-
                                     <td class="text-center align-middle">
                                         {{ Str::limit($item->isi_aduan, 7) }}
                                         @if (Str::length($item->isi_aduan) > 7)
@@ -173,16 +171,6 @@
                         }
                     }
                 }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
-                $('#example2').DataTable({
-                    "paging": true,
-                    "lengthChange": false,
-                    "searching": false,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": false,
-                    "responsive": true,
-                });
             });
         </script>
         <!-- SweetAlert2 -->

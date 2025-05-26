@@ -122,11 +122,11 @@
                                                 aria-label="Tutup"></button>
                                         </div>
                                         <div class="modal-body p-2">
-                                            <iframe src="{{ url('/uploads/' . $fileName) }}" width="100%"
-                                                height="500px" style="border: none;"></iframe>
+                                            <iframe class="surat-frame" data-src="{{ url('/uploads/' . $fileName) }}"
+                                                width="100%" height="500px" style="border: none;"></iframe>
                                         </div>
                                         <div class="modal-footer justify-content-between">
-                                            <button type="button" class="btn btn-secondary"
+                                            <button type="button" class="btn btn-secondary btn-sm"
                                                 data-bs-dismiss="modal">Tutup</button>
                                         </div>
                                     </div>
@@ -177,16 +177,6 @@
                         }
                     }
                 }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
-                $('#example2').DataTable({
-                    "paging": true,
-                    "lengthChange": false,
-                    "searching": false,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": false,
-                    "responsive": true,
-                });
             });
         </script>
         <!-- SweetAlert2 -->

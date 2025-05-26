@@ -21,6 +21,7 @@
 <!--begin::Body-->
 
 <body class="login-page bg-body-secondary">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <!-- Login 5 - Bootstrap Brain Component -->
     <section class="min-vh-100 d-flex justify-content-center align-items-center p-3 p-md-4 p-xl-5">
         <div class="container">
@@ -71,6 +72,8 @@
                                     </div>
                                     <div class="col-12">
                                         <div class="d-grid">
+                                            <div class="cf-turnstile" data-sitekey="0x4AAAAAABemDitfTsvZ2WLf"
+                                                data-theme="light"></div>
                                             <button class="btn bsb-btn-xl btn-primary" type="submit">Masuk!</button>
                                         </div>
                                     </div>
@@ -78,7 +81,7 @@
                             </form>
                             <div class="row">
                                 <div class="col-12">
-                                    <p class="mt-5 mb-4">Infrastruktur Teknologi | Pusat Kendali | Keamanan Informasi |
+                                    <p class="mt-5 mb-4">Infrastruktur Teknologi | Pusat Data | Keamanan Informasi |
                                         Persandian</p>
                                 </div>
                             </div>
