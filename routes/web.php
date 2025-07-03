@@ -28,6 +28,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin', [DashboardController::class, 'index'])->name('dashboard.admin')->middleware('userAkses:admin');
     Route::get('/aduan-layanan', [AduanLayananController::class, 'index'])->name('index.aduan.admin')->middleware('userAkses:admin');
     Route::patch('/aduan-layanan/{id}/update-status', [AduanLayananController::class, 'update'])->name('update.aduan.admin')->middleware('userAkses:admin');
+    Route::post('/aduan-layanan/{id}/reply', [AduanLayananController::class, 'reply'])->name('aduan.reply')->middleware('userAkses:admin');
     Route::get('/virtual-meeting', [VirtualMeetingController::class, 'index'])->name('index.vm.admin')->middleware('userAkses:admin');
     Route::patch('/virtual-meeting/{id}/update-status', [VirtualMeetingController::class, 'update'])->name('update.vm.admin')->middleware('userAkses:admin');
     Route::get('/virtual-private-server', [VirtualPrivateServerController::class, 'index'])->name('index.vps.admin')->middleware('userAkses:admin');

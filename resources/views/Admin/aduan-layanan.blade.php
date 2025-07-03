@@ -42,6 +42,7 @@
                                 <th class="text-center align-middle" style="width: 150px;">Aduan</th>
                                 <th class="text-center align-middle" style="width: 70px;">Status</th>
                                 <th class="text-center align-middle" style="width: 70px;">No. Pengadu</th>
+                                <th class="text-center align-middle" style="width: 50px;">Aksi</th>
                                 <th class="text-center align-middle" style="width: 90px;">Waktu Pengaduan</th>
                             </tr>
                         </thead>
@@ -52,11 +53,11 @@
                                     <td class="text-center align-middle">{{ $item->nama_lengkap }}</td>
                                     <td class="text-center align-middle">{{ $item->instansi }}</td>
                                     @php
-                                        $excerpt = Str::limit($item->isi_aduan, 7); // Potong jadi 100 karakter
+                                        $excerpt = Str::limit($item->isi_aduan, 100); // Potong jadi 100 karakter
                                     @endphp
                                     <td class="text-center align-middle">
-                                        {{ Str::limit($item->isi_aduan, 7) }}
-                                        @if (Str::length($item->isi_aduan) > 7)
+                                        {{ Str::limit($item->isi_aduan, 100) }}
+                                        @if (Str::length($item->isi_aduan) > 100)
                                             <button type="button" class="btn btn-link btn-sm" data-bs-toggle="modal"
                                                 data-bs-target="#modalAduan{{ $item->id }}">
                                                 Lihat Selengkapnya
@@ -92,13 +93,20 @@
 
                                     <td class="text-center align-middle">
                                         @if (!empty($nomor))
-                                            <a href="https://wa.me/{{ $nomor }}" target="_blank"
-                                                class="btn btn-success btn-sm">
-                                                <i class="bi bi-whatsapp"></i> Chat
-                                            </a>
+                                            {{ $nomor }}
+                                        @else
+                                            Tidak Ada
+                                        @endif
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        @if (!empty($nomor))
+                                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#replyModal{{ $item->id }}">
+                                                <i class="bi bi-whatsapp"></i> Balas
+                                            </button>
                                         @else
                                             <button class="btn btn-secondary btn-sm" disabled>
-                                                <i class="bi bi-whatsapp"></i> Tidak Ada
+                                                <i class="bi bi-whatsapp"></i> Balas
                                             </button>
                                         @endif
                                     </td>
@@ -108,7 +116,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                    @foreach ($aduan as $item)
+                    {{-- @foreach ($aduan as $item)
                         @if (Str::length($item->isi_aduan) > 100)
                             <div class="modal fade" id="modalAduan{{ $item->id }}" tabindex="-1"
                                 aria-labelledby="modalLabel{{ $item->id }}" aria-hidden="true">
@@ -127,7 +135,78 @@
                                 </div>
                             </div>
                         @endif
+                    @endforeach --}}
+                    @foreach ($aduan as $item)
+                        @if (Str::length($item->isi_aduan) > 100)
+                            <div class="modal fade" id="modalAduan{{ $item->id }}" tabindex="-1"
+                                aria-labelledby="modalLabel{{ $item->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalLabel{{ $item->id }}">Isi Aduan
+                                                Lengkap</h5>
+                                            {{-- Tombol Tutup Versi BS4 --}}
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{ $item->isi_aduan }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     @endforeach
+                    {{-- TAMBAHKAN LOOP BARU UNTUK MODAL BALASAN --}}
+                    @foreach ($aduan as $item)
+                        @php
+                            $nomor = str_replace('@c.us', '', $item->user_id);
+                        @endphp
+                        @if (!empty($nomor))
+                            <div class="modal fade" id="replyModal{{ $item->id }}" tabindex="-1"
+                                aria-labelledby="replyModalLabel{{ $item->id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="replyModalLabel{{ $item->id }}">Balas
+                                                Aduan Tiket: {{ $item->nomor_tiket }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <form action="{{ route('aduan.reply', $item->id) }}" method="POST">
+                                            @csrf
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label for="nama_pengadu" class="form-label">Nama Pengadu</label>
+                                                    <input type="text" class="form-control" id="nama_pengadu"
+                                                        value="{{ $item->nama_lengkap }}" disabled>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="nomor_wa" class="form-label">Nomor WhatsApp</label>
+                                                    <input type="text" class="form-control" name="nomor"
+                                                        value="{{ $nomor }}" readonly>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="pesan" class="form-label">Isi Balasan</label>
+                                                    <textarea class="form-control" name="pesan" id="pesan" rows="5"
+                                                        placeholder="Ketik balasan Anda di sini..." required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary btn-sm"
+                                                    data-bs-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn btn-primary btn-sm">Kirim
+                                                    Balasan</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                    {{-- AKHIR DARI MODAL BALASAN --}}
                 </div>
                 <!--end::App Content-->
             </div>
@@ -180,6 +259,18 @@
             <script>
                 Swal.fire({!! session('alert.config') !!});
             </script>
+        @endif
+
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
         @endif
     @endsection
 </x-layouts.app>

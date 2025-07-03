@@ -1,0 +1,27 @@
+2025/07/03-17:16:11.610 1510 Reusing MANIFEST C:\Users\mlhak\Documents\Project\hotline\venom-bot-aduan\tokens\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/07/03-17:16:11.623 1510 Recovering log #2626
+2025/07/03-17:16:11.689 1510 Reusing old log C:\Users\mlhak\Documents\Project\hotline\venom-bot-aduan\tokens\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/002626.log 
+2025/07/03-17:16:12.680 3ce8 Level-0 table #2632: started
+2025/07/03-17:16:12.715 3ce8 Level-0 table #2632: 1230037 bytes OK
+2025/07/03-17:16:12.717 3ce8 Delete type=0 #2626
+2025/07/03-17:16:12.718 3ce8 Manual compaction at level-0 from ' Y\x01\x00\x00\x00' @ 72057594037927935 : 1 .. ' Z\x01\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/07/03-17:16:14.450 1510 Compacting 1@1 + 2@2 files
+2025/07/03-17:16:14.560 1510 Generated table #2633@1: 87350 keys, 2236346 bytes
+2025/07/03-17:16:14.641 1510 Generated table #2634@1: 53120 keys, 1743704 bytes
+2025/07/03-17:16:14.641 1510 Compacted 1@1 + 2@2 files => 3980050 bytes
+2025/07/03-17:16:14.642 1510 compacted to: files[ 0 0 2 0 0 0 0 ]
+2025/07/03-17:16:14.643 1510 Delete type=2 #2628
+2025/07/03-17:16:14.643 1510 Delete type=2 #2629
+2025/07/03-17:16:14.643 1510 Delete type=2 #2632
+2025/07/03-17:16:21.875 3ce8 Level-0 table #2636: started
+2025/07/03-17:16:21.889 3ce8 Level-0 table #2636: 375518 bytes OK
+2025/07/03-17:16:21.891 3ce8 Delete type=0 #2631
+2025/07/03-17:16:21.892 3ce8 Manual compaction at level-0 from ' Z\x01\x00\x00\x00' @ 72057594037927935 : 1 .. ' [\x01\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/07/03-17:16:23.394 3dd4 Compacting 1@1 + 2@2 files
+2025/07/03-17:16:23.528 3dd4 Generated table #2637@1: 87478 keys, 2237566 bytes
+2025/07/03-17:16:23.602 3dd4 Generated table #2638@1: 57654 keys, 1873128 bytes
+2025/07/03-17:16:23.603 3dd4 Compacted 1@1 + 2@2 files => 4110694 bytes
+2025/07/03-17:16:23.604 3dd4 compacted to: files[ 0 0 2 0 0 0 0 ]
+2025/07/03-17:16:23.604 3dd4 Delete type=2 #2633
+2025/07/03-17:16:23.604 3dd4 Delete type=2 #2634
+2025/07/03-17:16:23.604 3dd4 Delete type=2 #2636
