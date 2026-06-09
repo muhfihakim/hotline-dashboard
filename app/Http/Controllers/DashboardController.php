@@ -15,9 +15,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class DashboardController extends Controller
-
 {
-    public function index()
+    public function index(Request $request)
     {
         // Hitung total
         $totalAduanLayanan = AduanLayanan::count();
@@ -75,6 +74,22 @@ class DashboardController extends Controller
         // Urutkan berdasarkan waktu terbaru
         $latestData = $latestData->sortByDesc('waktu')->take(10);
 
+        if ($request->wantsJson() || $request->is('api/*')) {
+            return response()->json([
+                'stats' => [
+                    'totalAduanLayanan' => $totalAduanLayanan,
+                    'totalVirtualMeeting' => $totalVirtualMeeting,
+                    'totalVps' => $totalVps,
+                    'totalBandwidthOnDemand' => $totalBandwidthOnDemand,
+                    'totalInfrastrukturBaru' => $totalInfrastrukturBaru,
+                    'totalResetEmail' => $totalResetEmail,
+                    'totalPentest' => $totalPentest,
+                    'totalTte' => $totalTte,
+                ],
+                'latestData' => $latestData
+            ]);
+        }
+
         return view('Admin.dash', compact(
             'totalAduanLayanan',
             'totalVirtualMeeting',
@@ -88,23 +103,9 @@ class DashboardController extends Controller
         ));
     }
 
-    // public function indexPimpinan()
-    // {
-    //     return view('Pimpinan.dash', [
-    //         'aduanLayanan' => AduanLayanan::all(),
-    //         'virtualMeeting' => VirtualMeeting::all(),
-    //         'vps' => VirtualPrivateServer::all(),
-    //         'bandwidth' => BandwidthOnDemand::all(),
-    //         'infrastruktur' => Infrastruktur::all(),
-    //         'resetEmail' => ResetEmail::all(),
-    //         'pentest' => Pentest::all(),
-    //         'tte' => TandaTanganElektronik::all(),
-    //     ]);
-    // }
-
-    public function indexPimpinan()
+    public function indexPimpinan(Request $request)
     {
-        return view('Pimpinan.dash', [
+        $data = [
             'aduanLayanan' => \App\Models\AduanLayanan::all(),
             'virtualMeeting' => \App\Models\VirtualMeeting::all(),
             'vps' => \App\Models\VirtualPrivateServer::all(),
@@ -113,6 +114,12 @@ class DashboardController extends Controller
             'resetEmail' => \App\Models\ResetEmail::all(),
             'pentest' => \App\Models\Pentest::all(),
             'tte' => \App\Models\TandaTanganElektronik::all(),
-        ]);
+        ];
+
+        if ($request->wantsJson() || $request->is('api/*')) {
+            return response()->json($data);
+        }
+
+        return view('Pimpinan.dash', $data);
     }
 }
