@@ -1,253 +1,134 @@
-<x-layouts.app>
-    @section('Css')
-        <!-- DataTables -->
-        <link rel="stylesheet" href="{{ asset('dist/css/dataTables.bootstrap4.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('dist/css/responsive.bootstrap4.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('dist/css/buttons.bootstrap4.min.css') }}">
-    @endsection
-    <main class="app-main">
-        <!--begin::App Content Header-->
-        <div class="app-content-header">
-            <!--begin::Container-->
-            <div class="container-fluid">
-                <!--begin::Row-->
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h3 class="mb-0">Permohonan Bandwidth on Demand (BOD)</h3>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-end">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Permohonan Bandwidth on Demand (BOD)
-                            </li>
-                        </ol>
-                    </div>
-                </div>
-                <!--end::Row-->
-            </div>
-            <!--end::Container-->
-        </div>
-        <div class="app-content">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title">Daftar Permohonan Bandwidth on Demand(BOD)</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <table id="example1" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th class="text-center align-middle" style="width: 100px;">Tiket</th>
-                                <th class="text-center align-middle" style="width: 190px;">Nama Lengkap</th>
-                                <th class="text-center align-middle" style="width: 180px;">Instansi</th>
-                                <th class="text-center align-middle" style="width: 150px;">Peruntukan</th>
-                                <th class="text-center align-middle" style="width: 100px;">Lokasi</th>
-                                <th class="text-center align-middle" style="width: 70px;">Surat</th>
-                                <th class="text-center align-middle" style="width: 70px;">Status</th>
-                                <th class="text-center align-middle" style="width: 70px;">No. Pemohon</th>
-                                <th class="text-center align-middle" style="width: 100px;">Waktu Permohonan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($bod as $index => $item)
-                                <tr>
-                                    <td class="text-center align-middle">{{ $item->nomor_tiket }}</td>
-                                    <td class="text-center align-middle">{{ $item->nama_lengkap }}</td>
-                                    <td class="text-center align-middle">{{ $item->instansi }}</td>
-                                    @php
-                                        $excerpt = Str::limit($item->jenis_koneksi_peruntukan, 7); // Potong jadi 100 karakter
-                                    @endphp
+<x-layouts.modern>
+  <div class="bg-white rounded-2xl shadow-sm border border-brand-100 overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
+      <h3 class="font-heading text-sm text-brand-800 mr-auto">Daftar Permohonan Bandwidth on Demand (BOD)</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Tiket</th>
+            <th>Nama Lengkap</th>
+            <th>Instansi</th>
+            <th>Peruntukan</th>
+            <th>Lokasi</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse ($bod as $item)
+          <tr>
+            <td class="font-mono text-xs text-brand-700 font-semibold">{{ $item->nomor_tiket }}</td>
+            <td class="font-medium whitespace-nowrap">{{ $item->nama_lengkap }}</td>
+            <td class="text-xs text-gray-500">{{ $item->instansi }}</td>
+            <td class="max-w-xs"><p class="truncate text-gray-600 text-xs">{{ Str::limit($item->jenis_koneksi_peruntukan, 50) }}</p></td>
+            <td class="text-xs text-gray-500">{{ $item->lokasi }}</td>
+            <td>
+              @if($item->status == '1')
+                <span class="badge badge-selesai">Selesai</span>
+              @else
+                <span class="badge badge-masuk">Open</span>
+              @endif
+            </td>
+            <td class="flex gap-2 items-center">
+              <button onclick="openModalDetail('{{ $item->id }}')" class="p-1.5 rounded-lg hover:bg-brand-50 text-brand-500" title="Lihat Detail"><i data-lucide="info" class="w-4 h-4"></i></button>
+              @if ($item->surat_permohonan)
+              <button onclick="openModalSurat('{{ $item->id }}')" class="p-1.5 rounded-lg hover:bg-blue-50 text-blue-500" title="Lihat Surat"><i data-lucide="file-text" class="w-4 h-4"></i></button>
+              @endif
+              @php $nomor = str_replace('@c.us', '', $item->user_id); @endphp
+              @if (!empty($nomor))
+              <a href="https://wa.me/{{ $nomor }}" target="_blank" class="p-1.5 rounded-lg hover:bg-emerald-50 text-emerald-500" title="Chat WhatsApp"><i data-lucide="message-circle" class="w-4 h-4"></i></a>
+              @endif
+            </td>
+          </tr>
+          @empty
+          <tr><td colspan="7" class="text-center py-4 text-gray-500">Tidak ada permohonan BOD ditemukan</td></tr>
+          @endforelse
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-                                    <td class="text-center align-middle">
-                                        {{ Str::limit($item->jenis_koneksi_peruntukan, 7) }}
-                                        @if (Str::length($item->jenis_koneksi_peruntukan) > 7)
-                                            <button type="button" class="btn btn-link btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#modalBod{{ $item->id }}">
-                                                Lihat Selengkapnya
-                                            </button>
-                                        @endif
-                                    </td>
-                                    <td class="text-center align-middle">{{ $item->lokasi }}</td>
-                                    <td class="text-center align-middle">
-                                        @if ($item->surat_permohonan)
-                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#modalSurat{{ $item->id }}">
-                                                <i class="bi bi-eye"></i> Lihat
-                                            </button>
-                                        @else
-                                            <button type="button" class="btn btn-secondary btn-sm" disabled>
-                                                <i class="bi bi-eye-slash"></i> Tidak Ada
-                                            </button>
-                                        @endif
-                                    </td>
-                                    <td class="text-center align-middle">
-                                        <form action="{{ route('update.bod.admin', $item->id) }}" method="POST"
-                                            id="statusForm{{ $item->id }}">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="hidden" name="status" id="statusInput{{ $item->id }}">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-info btn-sm">
-                                                    {{ $item->status == '1' ? 'Closed' : 'Open' }}
-                                                </button>
-                                                <button type="button"
-                                                    class="btn btn-info btn-sm dropdown-toggle dropdown-icon"
-                                                    data-toggle="dropdown">
-                                                </button>
-                                                <div class="dropdown-menu" role="menu">
-                                                    <a class="dropdown-item" href="#"
-                                                        onclick="submitStatus('{{ $item->id }}', '0')">Open</a>
-                                                    <a class="dropdown-item" href="#"
-                                                        onclick="submitStatus('{{ $item->id }}', '1')">Closed</a>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </td>
-                                    @php
-                                        $nomor = str_replace('@c.us', '', $item->user_id);
-                                    @endphp
+  <!-- Reusable Modal Container -->
+  <div id="modal-backdrop" class="fixed inset-0 bg-black/40 z-50 hidden flex items-center justify-center p-4" onclick="closeModalOutside(event)">
+    <div id="modal-box" class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-brand-700 to-brand-600 rounded-t-2xl">
+        <h2 id="modal-title" class="font-heading text-white text-base">Detail</h2>
+        <button onclick="closeModal()" class="text-white/70 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="modal-content" class="px-6 py-5 space-y-4 text-sm"></div>
+    </div>
+  </div>
 
-                                    <td class="text-center align-middle">
-                                        @if (!empty($nomor))
-                                            <a href="https://wa.me/{{ $nomor }}" target="_blank"
-                                                class="btn btn-success btn-sm">
-                                                <i class="bi bi-whatsapp"></i> Chat
-                                            </a>
-                                        @else
-                                            <button class="btn btn-secondary btn-sm" disabled>
-                                                <i class="bi bi-whatsapp"></i> Tidak Ada
-                                            </button>
-                                        @endif
-                                    </td>
-                                    <td class="text-center align-middle">
-                                        {{ optional($item->created_at)->format('H:i | d-m-Y') ?? '-' }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    @foreach ($bod as $item)
-                        {{-- Modal Surat Permohonan --}}
-                        @if ($item->surat_permohonan)
-                            @php $fileName = basename($item->surat_permohonan); @endphp
-                            <div class="modal fade" id="modalSurat{{ $item->id }}" tabindex="-1"
-                                aria-labelledby="modalLabelSurat{{ $item->id }}" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-scrollable modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Surat Permohonan</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Tutup"></button>
-                                        </div>
-                                        <div class="modal-body p-2">
-                                            <iframe class="surat-frame" data-src="{{ url('/uploads/' . $fileName) }}"
-                                                width="100%" height="500px" style="border: none;"></iframe>
-                                        </div>
-                                        <div class="modal-footer justify-content-between">
-                                            <button type="button" class="btn btn-secondary btn-sm"
-                                                data-bs-dismiss="modal">Tutup</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
+  @section('Scripts')
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  @if (session('alert.config'))
+      <script>Swal.fire({!! session('alert.config') !!});</script>
+  @endif
 
-                        {{-- Modal untuk Jenis Koneksi Peruntukan --}}
-                        @if (Str::length($item->jenis_koneksi_peruntukan) > 7)
-                            <div class="modal fade" id="modalBod{{ $item->id }}" tabindex="-1"
-                                aria-labelledby="modalLabelBod{{ $item->id }}" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-scrollable modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalLabelBod{{ $item->id }}">Detail
-                                                Jenis Koneksi & Peruntukan</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Tutup"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            {{ $item->jenis_koneksi_peruntukan }}
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Tutup</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                    @endforeach
-                </div>
-                <!--end::App Content-->
-            </div>
-        </div>
-    </main>
-    <!--end::App Main-->
-    @section('Scripts')
-        <!-- jQuery -->
-        <script src="{{ asset('dist/js/jquery.min.js') }}"></script>
-        <!-- Bootstrap 4 -->
-        <script src="{{ asset('dist/js/bootstrap.bundle.min.js') }}"></script>
-        <!-- DataTables  & js -->
-        <script src="{{ asset('dist/js/jquery.dataTables.min.js') }}"></script>
-        <script src="{{ asset('dist/js/dataTables.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('dist/js/dataTables.responsive.min.js') }}"></script>
-        <script src="{{ asset('dist/js/responsive.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('dist/js/dataTables.buttons.min.js') }}"></script>
-        <script src="{{ asset('dist/js/buttons.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('dist/js/buttons.colVis.min.js') }}"></script>
-        <!-- AdminLTE App -->
-        <script>
-            function submitStatus(id, statusValue) {
-                document.getElementById('statusInput' + id).value = statusValue;
-                document.getElementById('statusForm' + id).submit();
-            }
-        </script>
-        <!-- Page specific script -->
-        <script>
-            $(function() {
-                $("#example1").DataTable({
-                    "responsive": true,
-                    "lengthChange": false,
-                    "autoWidth": false,
-                    "buttons": [{
-                        extend: 'colvis',
-                        text: 'Tampilkan/Kolom'
-                    }],
-                    "language": {
-                        "buttons": {
-                            "colvis": "Tampilkan/Kolom"
-                        }
-                    }
-                }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-            });
-        </script>
-        <!-- SweetAlert2 -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    const dbData = @json($bod);
+    const updateRouteBase = "{{ route('update.bod.admin', ':id') }}";
+    const uploadBaseUrl = "{{ url('/uploads/') }}/";
 
-        <!-- Tampilkan notifikasi jika ada session flash -->
-        @if (session('alert.config'))
-            <script>
-                Swal.fire({!! session('alert.config') !!});
-            </script>
-        @endif
-    @endsection
-    <script>
-        function handleSurat(id, url) {
-            const isMobile = window.innerWidth < 768; // You can adjust breakpoint here
+    function openModalDetail(id) {
+      const item = dbData.find(x => x.id == id);
+      if(!item) return;
+      document.getElementById('modal-title').innerText = 'Detail Jenis Koneksi & Peruntukan - ' + item.nomor_tiket;
+      
+      const statusHtml = item.status == '1' ? '<span class="badge badge-selesai">Selesai</span>' : '<span class="badge badge-masuk">Open</span>';
+      
+      document.getElementById('modal-content').innerHTML = `
+        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 mb-4 whitespace-pre-wrap">${item.jenis_koneksi_peruntukan}</div>
+        <p><strong>Status Saat Ini:</strong> ${statusHtml}</p>
+        <form action="${updateRouteBase.replace(':id', item.id)}" method="POST" class="mt-4 border-t pt-4 flex gap-2">
+           @csrf @method('PATCH')
+           <input type="hidden" name="status" value="${item.status == '1' ? '0' : '1'}">
+           <button type="submit" class="px-4 py-2 rounded-lg ${item.status == '1' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-accent-500 text-white hover:bg-accent-600'} text-sm font-semibold transition-colors">
+              Ubah ke ${item.status == '1' ? 'Open' : 'Selesai'}
+           </button>
+        </form>
+      `;
+      showModal();
+    }
 
-            if (isMobile) {
-                // 👇 Option A: Buka tab baru
-                window.open(url, '_blank');
-
-                // 👇 Option B (langsung download): Buat anchor & klik otomatis
-                // let a = document.createElement('a');
-                // a.href = url;
-                // a.download = ''; // empty = gunakan nama file asli
-                // document.body.appendChild(a);
-                // a.click();
-                // document.body.removeChild(a);
-            } else {
-                $('#modalSurat' + id).modal('show');
-            }
+    function openModalSurat(id) {
+        const item = dbData.find(x => x.id == id);
+        if(!item || !item.surat_permohonan) return;
+        document.getElementById('modal-title').innerText = 'Surat Permohonan - ' + item.nomor_tiket;
+        const fileName = item.surat_permohonan.split('/').pop().split('\\').pop();
+        
+        // Handle mobile download fallback
+        if (window.innerWidth < 768) {
+            window.open(uploadBaseUrl + fileName, '_blank');
+            return;
         }
-    </script>
-</x-layouts.app>
+
+        document.getElementById('modal-content').innerHTML = `
+            <iframe src="${uploadBaseUrl + fileName}" width="100%" height="500px" style="border: none; border-radius: 8px;"></iframe>
+        `;
+        showModal();
+    }
+
+    function showModal() {
+        const backdrop = document.getElementById('modal-backdrop');
+        backdrop.classList.remove('hidden');
+        setTimeout(() => backdrop.style.opacity = '1', 10);
+        lucide.createIcons();
+    }
+    function closeModal() {
+        const backdrop = document.getElementById('modal-backdrop');
+        backdrop.style.opacity = '0';
+        setTimeout(() => {
+            backdrop.classList.add('hidden');
+            document.getElementById('modal-content').innerHTML = '';
+        }, 200);
+    }
+    function closeModalOutside(e) {
+        if (e.target === document.getElementById('modal-backdrop')) closeModal();
+    }
+  </script>
+  @endsection
+</x-layouts.modern>
