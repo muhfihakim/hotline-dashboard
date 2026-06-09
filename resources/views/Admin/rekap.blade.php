@@ -1,136 +1,94 @@
-<x-layouts.app>
-    @section('Css')
-        <link rel="stylesheet" href="{{ asset('dist/css/all.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('dist/css/dataTables.bootstrap4.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('dist/css/responsive.bootstrap4.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('dist/css/buttons.bootstrap4.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('dist/css/daterangepicker.css') }}">
-    @endsection
-    <main class="app-main">
-        <!--begin::App Content Header-->
-        <div class="app-content-header">
-            <!--begin::Container-->
-            <div class="container-fluid">
-                <!--begin::Row-->
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h3 class="mb-0">Laporan Rekap</h3>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-end">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Laporan Rekap</li>
-                        </ol>
-                    </div>
-                </div>
-                <!--end::Row-->
-            </div>
-            <!--end::Container-->
+<x-layouts.modern>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    
+    <!-- Export Form -->
+    <div class="bg-white rounded-2xl shadow-sm border border-brand-100 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-brand-700 to-brand-600">
+            <h3 class="font-heading text-base text-white">Export Laporan</h3>
         </div>
-        <div class="app-content">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">Laporan Rekap</h3>
-                        </div>
-                        <div class="card-body">
-                            <form action="{{ route('export.layanan') }}" method="GET">
-                                <div class="form-group mb-3">
-                                    <label>Rentang Tanggal:</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="bi bi-calendar3"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control float-right" id="reservation"
-                                            name="tanggal">
-                                    </div>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label for="layanan">Pilih Layanan:</label>
-                                    <select class="form-control" name="layanan" id="layanan">
-                                        <option value="" disabled selected>Layanan Yang Akan Diexport</option>
-                                        <option value="aduan">Aduan Layanan</option>
-                                        <option value="virtualmeeting">Virtual Meeting</option>
-                                        <option value="vps">Virtual Private Server</option>
-                                        <option value="bod">Bandwidth On Demand</option>
-                                        <option value="infrastruktur">Infrastruktur Baru</option>
-                                        <option value="email">Layanan Email</option>
-                                        <option value="pentest">Pen-Testing</option>
-                                        <option value="tte">Tanda Tangan Elektronik</option>
-                                        <!-- Tambah opsi lain di masa depan -->
-                                    </select>
-                                </div>
-                                <button type="submit" name="format" value="pdf"
-                                    class="btn btn-primary btn-sm mt-3">Export
-                                    PDF</button>
-                                <button type="submit" name="format" value="excel"
-                                    class="btn btn-success btn-sm mt-3 ml-2">Export Excel</button>
-                            </form>
-                        </div>
+        <div class="p-6">
+            <form action="{{ route('export.layanan') }}" method="GET" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Rentang Tanggal:</label>
+                    <div class="relative">
+                        <i data-lucide="calendar" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                        <input type="text" id="reservation" name="tanggal" class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-300 focus:border-brand-400 outline-none text-gray-700 bg-gray-50" placeholder="Pilih tanggal">
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card card-success">
-                        <div class="card-header">
-                            <h3 class="card-title">Panduan</h3>
-                        </div>
-                        <div class="card-body">
-                            <ol>
-                                <li>Pilih <strong>rentang tanggal</strong> mulai dan akhir yang diinginkan menggunakan
-                                    kolom tanggal yang tersedia.</li>
-                                <li>Pilih <strong>layanan</strong> yang ingin Anda ekspor dari daftar dropdown atau
-                                    pilihan layanan.</li>
-                                <li>Setelah memilih tanggal dan layanan, klik tombol <strong>Export ke PDF</strong> atau
-                                    <strong>Export ke Excel</strong> sesuai kebutuhan Anda.
-                                </li>
-                                <li>File hasil export akan otomatis terunduh ke perangkat Anda dalam format yang
-                                    dipilih.</li>
-                            </ol>
-                            <p><strong>Catatan:</strong> Pastikan semua pilihan sudah benar sebelum menekan tombol
-                                export.</p>
-                        </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Pilih Layanan:</label>
+                    <div class="relative">
+                        <i data-lucide="layers" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                        <select name="layanan" id="layanan" class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-300 focus:border-brand-400 outline-none text-gray-700 bg-gray-50 appearance-none cursor-pointer" required>
+                            <option value="" disabled selected>Pilih Layanan Yang Akan Diexport</option>
+                            <option value="aduan">Aduan Layanan</option>
+                            <option value="virtualmeeting">Virtual Meeting</option>
+                            <option value="vps">Virtual Private Server</option>
+                            <option value="bod">Bandwidth On Demand</option>
+                            <option value="infrastruktur">Infrastruktur Baru</option>
+                            <option value="email">Layanan Email</option>
+                            <option value="pentest">Pen-Testing</option>
+                            <option value="tte">Tanda Tangan Elektronik</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"></i>
                     </div>
                 </div>
+
+                <div class="pt-4 flex gap-3">
+                    <button type="submit" name="format" value="pdf" class="flex items-center justify-center gap-2 flex-1 px-4 py-2.5 rounded-lg bg-red-500 text-white hover:bg-red-600 font-semibold transition-colors">
+                        <i data-lucide="file-text" class="w-5 h-5"></i> Export PDF
+                    </button>
+                    <button type="submit" name="format" value="excel" class="flex items-center justify-center gap-2 flex-1 px-4 py-2.5 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 font-semibold transition-colors">
+                        <i data-lucide="sheet" class="w-5 h-5"></i> Export Excel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Panduan -->
+    <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 overflow-hidden h-fit">
+        <div class="px-5 py-4 border-b border-emerald-100 bg-gradient-to-r from-emerald-600 to-emerald-500">
+            <h3 class="font-heading text-base text-white flex items-center gap-2"><i data-lucide="help-circle" class="w-5 h-5"></i> Panduan Export</h3>
+        </div>
+        <div class="p-6">
+            <ol class="list-decimal list-inside space-y-3 text-sm text-gray-600">
+                <li>Pilih <strong class="text-gray-800">rentang tanggal</strong> mulai dan akhir yang diinginkan menggunakan kolom tanggal yang tersedia.</li>
+                <li>Pilih <strong class="text-gray-800">layanan</strong> yang ingin Anda ekspor dari daftar dropdown.</li>
+                <li>Setelah memilih tanggal dan layanan, klik tombol <strong class="text-gray-800">Export PDF</strong> atau <strong class="text-gray-800">Export Excel</strong> sesuai kebutuhan Anda.</li>
+                <li>File hasil export akan otomatis terunduh ke perangkat Anda.</li>
+            </ol>
+            <div class="mt-5 p-4 bg-yellow-50 rounded-lg border border-yellow-100 flex items-start gap-3">
+                <i data-lucide="info" class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5"></i>
+                <p class="text-xs text-yellow-700 leading-relaxed"><strong class="font-semibold">Catatan:</strong> Pastikan Anda telah memilih rentang tanggal dan layanan dengan benar sebelum menekan tombol export. Data yang diekspor akan mencakup semua permohonan dalam rentang tersebut terlepas dari statusnya.</p>
             </div>
         </div>
+    </div>
+  </div>
 
-    </main>
-    <!--end::App Main-->
-    @section('Scripts')
-        <!-- jQuery -->
-        <script src="{{ asset('dist/js/jquery.min.js') }}"></script>
-        <!-- Bootstrap 4 -->
-        <script src="{{ asset('dist/js/bootstrap.bundle.min.js') }}"></script>
-        <!-- DataTables  & js -->
-        <script src="{{ asset('dist/js/jquery.dataTables.min.js') }}"></script>
-        <script src="{{ asset('dist/js/dataTables.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('dist/js/dataTables.responsive.min.js') }}"></script>
-        <script src="{{ asset('dist/js/responsive.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('dist/js/dataTables.buttons.min.js') }}"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
-        <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-        <script>
-            $(function() {
-                $('#reservation').daterangepicker({
-                    locale: {
-                        format: 'DD-MM-YYYY'
-                    },
-                    opens: 'left'
-                });
-            });
-        </script>
-        <!-- SweetAlert2 -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  @section('Css')
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+  @endsection
 
-        <!-- Tampilkan notifikasi jika ada session flash -->
-        @if (session('alert.config'))
-            <script>
-                Swal.fire({!! session('alert.config') !!});
-            </script>
-        @endif
-    @endsection
-</x-layouts.app>
+  @section('Scripts')
+      <!-- SweetAlert2 -->
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      @if (session('alert.config'))
+          <script>Swal.fire({!! session('alert.config') !!});</script>
+      @endif
+
+      <!-- DateRangePicker -->
+      <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+      <script>
+          $(function() {
+              $('#reservation').daterangepicker({
+                  locale: { format: 'DD-MM-YYYY' },
+                  opens: 'left'
+              });
+          });
+      </script>
+  @endsection
+</x-layouts.modern>
