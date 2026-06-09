@@ -1,276 +1,147 @@
-<x-layouts.app>
-    @section('Css')
-        <!-- DataTables -->
-        <link rel="stylesheet" href="{{ asset('dist/css/dataTables.bootstrap4.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('dist/css/responsive.bootstrap4.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('dist/css/buttons.bootstrap4.min.css') }}">
-    @endsection
-    <main class="app-main">
-        <!--begin::App Content Header-->
-        <div class="app-content-header">
-            <!--begin::Container-->
-            <div class="container-fluid">
-                <!--begin::Row-->
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h3 class="mb-0">Aduan Layanan</h3>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-end">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Aduan Layanan</li>
-                        </ol>
-                    </div>
-                </div>
-                <!--end::Row-->
-            </div>
-            <!--end::Container-->
-        </div>
-        <div class="app-content">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title">Daftar Aduan Layanan</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <table id="example1" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th class="text-center align-middle" style="width: 100px;">Tiket</th>
-                                <th class="text-center align-middle" style="width: 190px;">Nama Lengkap</th>
-                                <th class="text-center align-middle" style="width: 180px;">Instansi</th>
-                                <th class="text-center align-middle" style="width: 150px;">Aduan</th>
-                                <th class="text-center align-middle" style="width: 70px;">Status</th>
-                                <th class="text-center align-middle" style="width: 70px;">No. Pengadu</th>
-                                <th class="text-center align-middle" style="width: 50px;">Aksi</th>
-                                <th class="text-center align-middle" style="width: 90px;">Waktu Pengaduan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($aduan as $index => $item)
-                                <tr>
-                                    <td class="text-center align-middle">{{ $item->nomor_tiket }}</td>
-                                    <td class="text-center align-middle">{{ $item->nama_lengkap }}</td>
-                                    <td class="text-center align-middle">{{ $item->instansi }}</td>
-                                    @php
-                                        $excerpt = Str::limit($item->isi_aduan, 100); // Potong jadi 100 karakter
-                                    @endphp
-                                    <td class="text-center align-middle">
-                                        {{ Str::limit($item->isi_aduan, 100) }}
-                                        @if (Str::length($item->isi_aduan) > 100)
-                                            <button type="button" class="btn btn-link btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#modalAduan{{ $item->id }}">
-                                                Lihat Selengkapnya
-                                            </button>
-                                        @endif
-                                    </td>
-                                    <td class="text-center align-middle">
-                                        <form action="{{ route('update.aduan.admin', $item->id) }}" method="POST"
-                                            id="statusForm{{ $item->id }}">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="hidden" name="status" id="statusInput{{ $item->id }}">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-info btn-sm">
-                                                    {{ $item->status == '1' ? 'Closed' : 'Open' }}
-                                                </button>
-                                                <button type="button"
-                                                    class="btn btn-info btn-sm dropdown-toggle dropdown-icon"
-                                                    data-toggle="dropdown">
-                                                </button>
-                                                <div class="dropdown-menu" role="menu">
-                                                    <a class="dropdown-item" href="#"
-                                                        onclick="submitStatus('{{ $item->id }}', '0')">Open</a>
-                                                    <a class="dropdown-item" href="#"
-                                                        onclick="submitStatus('{{ $item->id }}', '1')">Closed</a>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </td>
-                                    @php
-                                        $nomor = str_replace('@c.us', '', $item->user_id);
-                                    @endphp
+<x-layouts.modern>
+  <div class="bg-white rounded-2xl shadow-sm border border-brand-100 overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
+      <h3 class="font-heading text-sm text-brand-800 mr-auto">Daftar Aduan Layanan</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th>No Tiket</th>
+            <th>Nama Lengkap</th>
+            <th>Instansi</th>
+            <th>Isi Aduan</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse ($aduan as $item)
+          <tr>
+            <td class="font-mono text-xs text-brand-700 font-semibold">{{ $item->nomor_tiket }}</td>
+            <td class="font-medium whitespace-nowrap">{{ $item->nama_lengkap }}</td>
+            <td class="text-xs text-gray-500">{{ $item->instansi }}</td>
+            <td class="max-w-xs"><p class="truncate text-gray-600 text-xs">{{ Str::limit($item->isi_aduan, 50) }}</p></td>
+            <td>
+              @if($item->status == '1')
+                <span class="badge badge-selesai">Selesai</span>
+              @else
+                <span class="badge badge-masuk">Open</span>
+              @endif
+            </td>
+            <td class="flex gap-2 items-center">
+              <button onclick="openModalAduan('{{ $item->id }}')" class="p-1.5 rounded-lg hover:bg-brand-50 text-brand-500" title="Detail"><i data-lucide="eye" class="w-4 h-4"></i></button>
+              <button onclick="openReplyModal('{{ $item->id }}')" class="p-1.5 rounded-lg hover:bg-emerald-50 text-emerald-500" title="Balas"><i data-lucide="message-square" class="w-4 h-4"></i></button>
+            </td>
+          </tr>
+          @empty
+          <tr><td colspan="6" class="text-center py-4 text-gray-500">Tidak ada aduan ditemukan</td></tr>
+          @endforelse
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-                                    <td class="text-center align-middle">
-                                        @if (!empty($nomor))
-                                            {{ $nomor }}
-                                        @else
-                                            Tidak Ada
-                                        @endif
-                                    </td>
-                                    <td class="text-center align-middle">
-                                        @if (!empty($nomor))
-                                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#replyModal{{ $item->id }}">
-                                                <i class="bi bi-whatsapp"></i> Balas
-                                            </button>
-                                        @else
-                                            <button class="btn btn-secondary btn-sm" disabled>
-                                                <i class="bi bi-whatsapp"></i> Balas
-                                            </button>
-                                        @endif
-                                    </td>
-                                    <td class="text-center align-middle">
-                                        {{ optional($item->created_at)->format('H:i | d-m-Y') }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    {{-- @foreach ($aduan as $item)
-                        @if (Str::length($item->isi_aduan) > 100)
-                            <div class="modal fade" id="modalAduan{{ $item->id }}" tabindex="-1"
-                                aria-labelledby="modalLabel{{ $item->id }}" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-scrollable modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalLabel{{ $item->id }}">Isi Aduan
-                                                Lengkap</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Tutup"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            {{ $item->isi_aduan }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                    @endforeach --}}
-                    @foreach ($aduan as $item)
-                        @if (Str::length($item->isi_aduan) > 100)
-                            <div class="modal fade" id="modalAduan{{ $item->id }}" tabindex="-1"
-                                aria-labelledby="modalLabel{{ $item->id }}" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-scrollable modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalLabel{{ $item->id }}">Isi Aduan
-                                                Lengkap</h5>
-                                            {{-- Tombol Tutup Versi BS4 --}}
-                                            <button type="button" class="close" data-dismiss="modal"
-                                                aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            {{ $item->isi_aduan }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                    @endforeach
-                    {{-- TAMBAHKAN LOOP BARU UNTUK MODAL BALASAN --}}
-                    @foreach ($aduan as $item)
-                        @php
-                            $nomor = str_replace('@c.us', '', $item->user_id);
-                        @endphp
-                        @if (!empty($nomor))
-                            <div class="modal fade" id="replyModal{{ $item->id }}" tabindex="-1"
-                                aria-labelledby="replyModalLabel{{ $item->id }}" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="replyModalLabel{{ $item->id }}">Balas
-                                                Aduan Tiket: {{ $item->nomor_tiket }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <form action="{{ route('aduan.reply', $item->id) }}" method="POST">
-                                            @csrf
-                                            <div class="modal-body">
-                                                <div class="mb-3">
-                                                    <label for="nama_pengadu" class="form-label">Nama Pengadu</label>
-                                                    <input type="text" class="form-control" id="nama_pengadu"
-                                                        value="{{ $item->nama_lengkap }}" disabled>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="nomor_wa" class="form-label">Nomor WhatsApp</label>
-                                                    <input type="text" class="form-control" name="nomor"
-                                                        value="{{ $nomor }}" readonly>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="pesan" class="form-label">Isi Balasan</label>
-                                                    <textarea class="form-control" name="pesan" id="pesan" rows="5"
-                                                        placeholder="Ketik balasan Anda di sini..." required></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary btn-sm"
-                                                    data-bs-dismiss="modal">Batal</button>
-                                                <button type="submit" class="btn btn-primary btn-sm">Kirim
-                                                    Balasan</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                    @endforeach
-                    {{-- AKHIR DARI MODAL BALASAN --}}
-                </div>
-                <!--end::App Content-->
-            </div>
-        </div>
-    </main>
-    <!--end::App Main-->
-    @section('Scripts')
-        <!-- jQuery -->
-        <script src="{{ asset('dist/js/jquery.min.js') }}"></script>
-        <!-- Bootstrap 4 -->
-        <script src="{{ asset('dist/js/bootstrap.bundle.min.js') }}"></script>
-        <!-- DataTables  & js -->
-        <script src="{{ asset('dist/js/jquery.dataTables.min.js') }}"></script>
-        <script src="{{ asset('dist/js/dataTables.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('dist/js/dataTables.responsive.min.js') }}"></script>
-        <script src="{{ asset('dist/js/responsive.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('dist/js/dataTables.buttons.min.js') }}"></script>
-        <script src="{{ asset('dist/js/buttons.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('dist/js/buttons.colVis.min.js') }}"></script>
-        <!-- AdminLTE App -->
-        <script>
-            function submitStatus(id, statusValue) {
-                document.getElementById('statusInput' + id).value = statusValue;
-                document.getElementById('statusForm' + id).submit();
-            }
-        </script>
-        <!-- Page specific script -->
-        <script>
-            $(function() {
-                $("#example1").DataTable({
-                    "responsive": true,
-                    "lengthChange": false,
-                    "autoWidth": false,
-                    "buttons": [{
-                        extend: 'colvis',
-                        text: 'Tampilkan/Kolom'
-                    }],
-                    "language": {
-                        "buttons": {
-                            "colvis": "Tampilkan/Kolom"
-                        }
-                    }
-                }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-            });
-        </script>
-        <!-- SweetAlert2 -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Reusable Modal Container -->
+  <div id="modal-backdrop" class="fixed inset-0 bg-black/40 z-50 hidden flex items-center justify-center p-4" onclick="closeModalOutside(event)">
+    <div id="modal-box" class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-brand-700 to-brand-600 rounded-t-2xl">
+        <h2 id="modal-title" class="font-heading text-white text-base">Detail</h2>
+        <button onclick="closeModal()" class="text-white/70 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="modal-content" class="px-6 py-5 space-y-4 text-sm"></div>
+    </div>
+  </div>
 
-        @if (session('alert.config'))
-            <script>
-                Swal.fire({!! session('alert.config') !!});
-            </script>
-        @endif
+  @section('Scripts')
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  @if (session('alert.config'))
+      <script>
+          Swal.fire({!! session('alert.config') !!});
+      </script>
+  @endif
+  @if (session('success'))
+      <script>
+          showToast('{{ session('success') }}', 'success');
+      </script>
+  @endif
+  @if (session('error'))
+      <script>
+          showToast('{{ session('error') }}', 'error');
+      </script>
+  @endif
 
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+  <script>
+    // Escape HTML from backend to avoid JS injection issues
+    const aduanData = @json($aduan);
+    const updateRouteBase = "{{ route('update.aduan.admin', ':id') }}";
+    const replyRouteBase = "{{ route('aduan.reply', ':id') }}";
 
-        @if (session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
-    @endsection
-</x-layouts.app>
+    function openModalAduan(id) {
+      const item = aduanData.find(x => x.id == id);
+      if(!item) return;
+      document.getElementById('modal-title').innerText = 'Detail Aduan';
+      
+      const statusHtml = item.status == '1' ? '<span class="badge badge-selesai">Selesai</span>' : '<span class="badge badge-masuk">Open</span>';
+      
+      document.getElementById('modal-content').innerHTML = `
+        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 mb-4 whitespace-pre-wrap">${item.isi_aduan}</div>
+        <p><strong>Status Saat Ini:</strong> ${statusHtml}</p>
+        <form action="${updateRouteBase.replace(':id', item.id)}" method="POST" class="mt-4 border-t pt-4 flex gap-2">
+           @csrf @method('PATCH')
+           <input type="hidden" name="status" value="${item.status == '1' ? '0' : '1'}">
+           <button type="submit" class="px-4 py-2 rounded-lg ${item.status == '1' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-accent-500 text-white hover:bg-accent-600'} text-sm font-semibold transition-colors">
+              Ubah ke ${item.status == '1' ? 'Open' : 'Selesai'}
+           </button>
+        </form>
+      `;
+      showModal();
+    }
+
+    function openReplyModal(id) {
+      const item = aduanData.find(x => x.id == id);
+      if(!item) return;
+      const nomor = item.user_id ? item.user_id.replace('@c.us', '') : '';
+      document.getElementById('modal-title').innerText = 'Balas Aduan Tiket: ' + item.nomor_tiket;
+      document.getElementById('modal-content').innerHTML = `
+        <form action="${replyRouteBase.replace(':id', item.id)}" method="POST">
+           @csrf
+           <div class="mb-3">
+             <label class="block text-xs font-semibold text-gray-500 mb-1">Nama Pengadu</label>
+             <input type="text" value="${item.nama_lengkap}" disabled class="w-full border border-gray-200 rounded-lg px-3 py-2 bg-gray-50 text-gray-600">
+           </div>
+           <div class="mb-3">
+             <label class="block text-xs font-semibold text-gray-500 mb-1">Nomor WhatsApp</label>
+             <input type="text" name="nomor" value="${nomor}" readonly class="w-full border border-gray-200 rounded-lg px-3 py-2 bg-gray-50 text-gray-600">
+           </div>
+           <div class="mb-4">
+             <label class="block text-xs font-semibold text-gray-500 mb-1">Isi Balasan</label>
+             <textarea name="pesan" rows="5" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-gray-700 focus:ring-2 focus:ring-brand-400 outline-none transition-shadow" required placeholder="Ketik balasan Anda di sini..."></textarea>
+           </div>
+           <div class="flex justify-end gap-2">
+             <button type="button" onclick="closeModal()" class="px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">Batal</button>
+             <button type="submit" class="px-4 py-2 bg-brand-600 text-white hover:bg-brand-700 rounded-lg text-sm font-semibold transition-colors">Kirim Balasan</button>
+           </div>
+        </form>
+      `;
+      showModal();
+    }
+
+    function showModal() {
+        const backdrop = document.getElementById('modal-backdrop');
+        backdrop.classList.remove('hidden');
+        setTimeout(() => backdrop.style.opacity = '1', 10);
+        lucide.createIcons();
+    }
+    function closeModal() {
+        const backdrop = document.getElementById('modal-backdrop');
+        backdrop.style.opacity = '0';
+        setTimeout(() => backdrop.classList.add('hidden'), 200);
+    }
+    function closeModalOutside(e) {
+        if (e.target === document.getElementById('modal-backdrop')) closeModal();
+    }
+  </script>
+  @endsection
+</x-layouts.modern>
