@@ -53,14 +53,15 @@ class SesiController extends Controller
         $request->validate([
             'email' => 'required',
             'password' => 'required',
-            'cf-turnstile-response' => 'required',
+            // 'cf-turnstile-response' => 'required',
         ], [
             'email.required' => 'Email wajib diisi',
             'password.required' => 'Password wajib diisi',
-            'cf-turnstile-response.required' => 'Verifikasi CAPTCHA diperlukan',
+            // 'cf-turnstile-response.required' => 'Verifikasi CAPTCHA diperlukan',
         ]);
 
-        // Verifikasi Turnstile response ke server Cloudflare
+        // Verifikasi Turnstile dimatikan sementara untuk local development
+        /*
         $response = \Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
             'secret' => env('TURNSTILE_SECRET_KEY'),
             'response' => $request->input('cf-turnstile-response'),
@@ -77,6 +78,7 @@ class SesiController extends Controller
                 ])
             ])->withInput();
         }
+        */
 
         // Proses login
         $infologin = [

@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Bot Aduan WA — Diskominfo Subang</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Poppins', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50:  '#EEF4FC',
+              100: '#D6E5F7',
+              200: '#AECBEF',
+              300: '#7DAEE5',
+              400: '#4D90DA',
+              500: '#2272CE',
+              600: '#1A5AA8',
+              700: '#1A4F8A',
+              800: '#153F70',
+              900: '#0F2D52',
+            },
+            accent: {
+              400: '#34D399',
+              500: '#10B981',
+              600: '#059669',
+            },
+            warn:  { 500: '#F59E0B' },
+            danger:{ 500: '#EF4444' },
+          },
+          boxShadow: {
+            'soft': '0 2px 14px rgba(26,79,138,0.08)',
+            'soft-lg': '0 8px 28px rgba(26,79,138,0.12)',
+            'glow-blue': '0 0 0 4px rgba(26,79,138,0.10)',
+            'glow-emerald': '0 0 0 4px rgba(5,150,105,0.12)',
+          },
+          animation: {
+            'pulse-slow': 'pulse 2.5s cubic-bezier(0.4,0,0.6,1) infinite',
+            'fade-in': 'fadeIn .25s ease-out',
+            'slide-up': 'slideUp .35s cubic-bezier(.4,0,.2,1)',
+            'scale-in': 'scaleIn .25s cubic-bezier(.4,0,.2,1)',
+          },
+          keyframes: {
+            fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
+            slideUp: { from: { transform: 'translateY(12px)', opacity: '0' }, to: { transform: 'translateY(0)', opacity: '1' } },
+            scaleIn: { from: { transform: 'scale(.96)', opacity: '0' }, to: { transform: 'scale(1)', opacity: '1' } },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+    h1, h2, h3, .font-heading { font-family: 'Poppins', 'sans-serif'; letter-spacing: -0.01em; }
+
+    /* ── Gradient background ── */
+    .page-bg {
+      background: linear-gradient(145deg, #EEF4FC 0%, #F0FBF6 40%, #FAFFFE 100%);
+      min-height: 100vh;
+    }
+
+    /* ── Header banner ── */
+    .header-banner {
+      background:
+        radial-gradient(circle at 20% 0%, rgba(255,255,255,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 100%, rgba(16,185,129,0.35) 0%, transparent 50%),
+        linear-gradient(135deg, #1A4F8A 0%, #1A5AA8 45%, #0F7F5C 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .header-banner::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0);
+      background-size: 24px 24px;
+      pointer-events: none;
+    }
+
+    /* ── Stat cards ── */
+    .stat-card {
+      background: #fff;
+      border-radius: 14px;
+      border-top: 4px solid transparent;
+      box-shadow: 0 2px 14px rgba(26,79,138,0.08);
+      transition: transform .2s cubic-bezier(.4,0,.2,1), box-shadow .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::after {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 80px; height: 80px;
+      background: radial-gradient(circle at top right, rgba(26,79,138,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(26,79,138,0.14); }
+    .stat-card.blue   { border-top-color: #1A4F8A; }
+    .stat-card.green  { border-top-color: #059669; }
+    .stat-card.yellow { border-top-color: #F59E0B; }
+    .stat-card.red    { border-top-color: #EF4444; }
+
+    /* ── Chart card ── */
+    .chart-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 14px rgba(26,79,138,0.08);
+      transition: box-shadow .2s;
+    }
+    .chart-card:hover { box-shadow: 0 8px 24px rgba(26,79,138,0.10); }
+
+    /* ── Table ── */
+    .tbl-wrap {
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 14px rgba(26,79,138,0.08);
+      background: #fff;
+    }
+    table { border-collapse: collapse; width: 100%; }
+    thead th {
+      background: linear-gradient(90deg, #1A4F8A, #1A5AA8);
+      color: #fff;
+      font-size: .75rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 13px 16px;
+      text-align: left;
+      font-family: 'Poppins', 'sans-serif';
+      font-weight: 600;
+      white-space: nowrap;
+      position: sticky; top: 0; z-index: 1;
+    }
+    tbody tr {
+      border-bottom: 1px solid #EEF4FC;
+      background: #fff;
+      transition: background-color .15s, transform .15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #F5F9FF; }
+    tbody tr.row-active { background: #EEF4FC; }
+    tbody td { padding: 12px 16px; font-size: .875rem; color: #374151; vertical-align: middle; }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: .72rem; font-weight: 600; letter-spacing: .03em;
+      white-space: nowrap;
+    }
+    .badge-masuk    { background: #DBEAFE; color: #1D4ED8; }
+    .badge-proses   { background: #FEF3C7; color: #B45309; }
+    .badge-selesai  { background: #D1FAE5; color: #065F46; }
+    .badge-ditolak  { background: #FEE2E2; color: #B91C1C; }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      transition: transform .3s cubic-bezier(.4,0,.2,1), width .3s cubic-bezier(.4,0,.2,1);
+      background: linear-gradient(180deg, #153F70 0%, #0F2D52 100%);
+    }
+    #sidebar-overlay {
+      transition: opacity .3s;
+    }
+    .nav-item {
+      position: relative;
+      transition: all .15s ease;
+    }
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(34,114,206,0.25) 0%, rgba(34,114,206,0.08) 100%);
+      box-shadow: inset 3px 0 0 #34D399;
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute; left: 0; top: 8px; bottom: 8px;
+      width: 3px;
+      background: #34D399;
+      border-radius: 0 3px 3px 0;
+    }
+    .nav-item:hover:not(.active) {
+      background: rgba(255,255,255,0.04);
+    }
+
+    /* ── Toast ── */
+    #toast-container {
+      position: fixed; bottom: 24px; right: 24px;
+      display: flex; flex-direction: column; gap: 10px;
+      z-index: 9999; pointer-events: none;
+      max-height: calc(100vh - 48px);
+      overflow: hidden;
+    }
+    .toast {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 13px 16px; border-radius: 12px;
+      box-shadow: 0 6px 24px rgba(0,0,0,.15);
+      background: #fff; min-width: 260px; max-width: 340px;
+      pointer-events: all;
+      animation: slideIn .3s ease forwards;
+      border-left: 4px solid #1A4F8A;
+    }
+    .toast.success { border-left-color: #059669; }
+    .toast.warning { border-left-color: #F59E0B; }
+    .toast.error   { border-left-color: #EF4444; }
+    .toast.info    { border-left-color: #1A4F8A; }
+    @keyframes slideIn {
+      from { transform: translateX(110%); opacity: 0; }
+      to   { transform: translateX(0);    opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0);    opacity: 1; }
+      to   { transform: translateX(110%); opacity: 0; }
+    }
+    .toast.hide { animation: slideOut .3s ease forwards; }
+
+    /* ── Modal ── */
+    #modal-backdrop {
+      transition: opacity .25s, backdrop-filter .25s;
+      backdrop-filter: blur(2px);
+    }
+    #modal-box {
+      animation: scaleIn .25s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes scaleIn {
+      from { transform: scale(.94); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: #F1F5F9; }
+    ::-webkit-scrollbar-thumb { background: #AECBEF; border-radius: 6px; }
+    ::-webkit-scrollbar-thumb:hover { background: #7DAEE5; }
+
+    /* ── Mobile sidebar hide ── */
+    @media (max-width: 1023px) {
+      #sidebar { transform: translateX(-100%); }
+      #sidebar.open { transform: translateX(0); }
+    }
+
+    /* ── Print styles ── */
+    @media print {
+      .no-print, #sidebar, #modal-backdrop, #toast-container { display: none !important; }
+      .header-banner { background: #1A4F8A !important; -webkit-print-color-adjust: exact; }
+    }
+
+    /* ── Focus ring ── */
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid #4D90DA;
+      outline-offset: 2px;
+    }
+
+    /* ── Stat card trend bar ── */
+    .stat-trend {
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #1A4F8A var(--pct,50%), #EEF4FC var(--pct,50%));
+      margin-top: 12px;
+    }
+
+    /* ── Live indicator ── */
+    .live-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: #EF4444;
+      border-radius: 50%;
+      animation: livePulse 1.5s ease-in-out infinite;
+      box-shadow: 0 0 0 0 rgba(239,68,68,0.7);
+    }
+    @keyframes livePulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
+      50%     { box-shadow: 0 0 0 6px rgba(239,68,68,0); }
+    }
+
+    /* ── Scroll to top ── */
+    #scrollTopBtn {
+      position: fixed; bottom: 24px; left: 24px;
+      width: 42px; height: 42px;
+      background: #1A4F8A; color: #fff;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 14px rgba(26,79,138,0.35);
+      z-index: 30;
+      opacity: 0; transform: translateY(20px);
+      pointer-events: none;
+      transition: opacity .25s, transform .25s, background .15s;
+    }
+    #scrollTopBtn.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    #scrollTopBtn:hover { background: #153F70; }
+  </style>
+</head>
+<body class="page-bg font-body">
+
+<!-- ═══════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════ -->
+<div id="sidebar-overlay" class="fixed inset-0 bg-black/40 z-30 hidden opacity-0 lg:hidden" onclick="closeSidebar()"></div>
+
+<aside id="sidebar" class="fixed top-0 left-0 h-full w-64 z-40 flex flex-col shadow-2xl">
+  <!-- Logo area -->
+  <div class="px-5 py-5 border-b border-white/10 flex items-center gap-3 relative">
+    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+      </svg>
+    </div>
+    <div class="min-w-0">
+      <p class="text-white font-heading text-sm leading-tight truncate">Bot Aduan WA</p>
+      <p class="text-blue-200 text-xs truncate">Diskominfo Subang</p>
+    </div>
+    <button onclick="closeSidebar()" class="ml-auto text-blue-200 hover:text-white lg:hidden p-1 rounded-lg hover:bg-white/10 transition-colors">
+      <i data-lucide="x" class="w-5 h-5"></i>
+    </button>
+  </div>
+
+  <!-- Nav -->
+  <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+    <p class="px-3 text-blue-300/70 text-[10px] font-semibold uppercase tracking-widest mb-2">Menu Utama</p>
+    <a href="#" class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white">
+      <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i>
+      <span class="flex-1">Dashboard</span>
+    </a>
+    <a href="#" onclick="showSection('aduan')" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-blue-200 hover:text-white transition-colors">
+      <i data-lucide="message-circle" class="w-4 h-4 flex-shrink-0"></i>
+      <span class="flex-1">Daftar Aduan</span>
+      <span class="bg-accent-500 text-white text-xs px-1.5 py-0.5 rounded-full font-semibold">12</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-blue-200 hover:text-white transition-colors">
+      <i data-lucide="bar-chart-2" class="w-4 h-4 flex-shrink-0"></i>
+      <span class="flex-1">Laporan & Rekap</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-blue-200 hover:text-white transition-colors">
+      <i data-lucide="users" class="w-4 h-4 flex-shrink-0"></i>
+      <span class="flex-1">Pengguna</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-blue-200 hover:text-white transition-colors">
+      <i data-lucide="settings" class="w-4 h-4 flex-shrink-0"></i>
+      <span class="flex-1">Pengaturan Bot</span>
+    </a>
+
+    <div class="pt-5">
+      <p class="px-3 text-blue-300/70 text-[10px] font-semibold uppercase tracking-widest mb-2">Referensi</p>
+      <a href="#" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-blue-200 hover:text-white transition-colors">
+        <i data-lucide="tag" class="w-4 h-4 flex-shrink-0"></i>
+        <span class="flex-1">Kategori Aduan</span>
+      </a>
+      <a href="#" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-blue-200 hover:text-white transition-colors">
+        <i data-lucide="building-2" class="w-4 h-4 flex-shrink-0"></i>
+        <span class="flex-1">OPD / Dinas</span>
+      </a>
+    </div>
+
+    <!-- System status card -->
+    <div class="pt-5 px-1">
+      <div class="bg-white/5 border border-white/10 rounded-xl p-3">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="live-dot"></span>
+          <p class="text-white text-xs font-semibold">Sistem Aktif</p>
+        </div>
+        <p class="text-blue-200 text-[11px] leading-relaxed">Bot WhatsApp berjalan normal. Terakhir sync 2 menit lalu.</p>
+      </div>
+    </div>
+  </nav>
+
+  <!-- User -->
+  <div class="px-4 py-4 border-t border-white/10 flex items-center gap-3 bg-black/10">
+    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center text-white font-heading text-sm flex-shrink-0 shadow-md">A</div>
+    <div class="flex-1 min-w-0">
+      <p class="text-white text-xs font-semibold truncate">Admin Diskominfo</p>
+      <p class="text-blue-300/80 text-[11px] truncate">diskominfo@subang.go.id</p>
+    </div>
+    <button class="text-blue-300 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors" title="Logout">
+      <i data-lucide="log-out" class="w-4 h-4"></i>
+    </button>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT WRAPPER
+════════════════════════════════════════════ -->
+<div class="lg:pl-64 min-h-screen flex flex-col">
+
+  <!-- ── TOP HEADER BANNER ── -->
+  <header class="header-banner text-white px-5 relative">
+    <div class="flex items-center gap-3 py-4 relative z-10">
+      <button onclick="openSidebar()" class="lg:hidden p-2 rounded-lg bg-white/15 hover:bg-white/25 transition-colors mr-1">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+      <div class="flex items-center gap-3 flex-1 min-w-0">
+        <div class="hidden sm:flex flex-col min-w-0">
+          <span class="font-heading text-lg leading-tight truncate">Dashboard Bot Aduan WhatsApp</span>
+          <span class="text-blue-200 text-xs truncate">Dinas Komunikasi dan Informatika — Kabupaten Subang</span>
+        </div>
+        <div class="sm:hidden">
+          <span class="font-heading text-base">Bot Aduan WA</span>
+        </div>
+      </div>
+      <!-- Date & Notif -->
+      <div class="flex items-center gap-2 md:gap-3 ml-auto">
+        <span id="live-date" class="hidden md:flex items-center gap-2 text-xs text-blue-100 bg-white/10 px-3 py-1.5 rounded-lg">
+          <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+          <span></span>
+        </span>
+        <div class="relative">
+          <button onclick="toggleNotif()" class="relative p-2 rounded-lg bg-white/15 hover:bg-white/25 transition-colors">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+            <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full text-xs flex items-center justify-center font-bold ring-2 ring-white/30">3</span>
+          </button>
+          <div id="notif-dropdown" class="hidden absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 text-gray-800 z-50 overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+              <p class="font-heading text-sm text-brand-800">Notifikasi</p>
+              <span class="text-xs text-gray-400">3 baru</span>
+            </div>
+            <div class="max-h-80 overflow-y-auto">
+              <a href="#" class="block px-4 py-3 hover:bg-brand-50 border-b border-gray-50 transition-colors">
+                <div class="flex gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="message-square" class="w-4 h-4 text-blue-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-800">Aduan baru masuk</p>
+                    <p class="text-xs text-gray-500 truncate">Budi Santoso melapor kerusakan jalan…</p>
+                    <p class="text-[10px] text-gray-400 mt-0.5">2 menit lalu</p>
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="block px-4 py-3 hover:bg-brand-50 border-b border-gray-50 transition-colors">
+                <div class="flex gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-800">Aduan selesai ditangani</p>
+                    <p class="text-xs text-gray-500 truncate">Siti Rahayu — Kebersihan RT 03 RW 05</p>
+                    <p class="text-[10px] text-gray-400 mt-0.5">15 menit lalu</p>
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="block px-4 py-3 hover:bg-brand-50 transition-colors">
+                <div class="flex gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="alert-triangle" class="w-4 h-4 text-yellow-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-800">Aduan perlu ditinjau</p>
+                    <p class="text-xs text-gray-500 truncate">Ahmad Fauzi — Lampu jalan Gang Mawar</p>
+                    <p class="text-[10px] text-gray-400 mt-0.5">1 jam lalu</p>
+                  </div>
+                </div>
+              </a>
+            </div>
+            <a href="#" class="block px-4 py-2.5 text-center text-xs font-semibold text-brand-600 hover:bg-brand-50 border-t border-gray-100">Lihat semua notifikasi</a>
+          </div>
+        </div>
+        <button onclick="exportCSV()" class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-accent-500 hover:bg-accent-600 text-white text-sm font-semibold transition-colors shadow-lg shadow-accent-500/30">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span class="hidden md:inline">Export</span>
+        </button>
+        <button class="hidden md:flex w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 transition-colors items-center justify-center" title="Profil">
+          <i data-lucide="user" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── BREADCRUMB + PAGE TITLE ── -->
+  <div class="px-4 md:px-6 pt-5">
+    <div class="flex items-center gap-2 text-xs text-gray-500">
+      <a href="#" class="hover:text-brand-600 transition-colors flex items-center gap-1">
+        <i data-lucide="home" class="w-3.5 h-3.5"></i> Beranda
+      </a>
+      <i data-lucide="chevron-right" class="w-3 h-3 text-gray-300"></i>
+      <span class="text-brand-700 font-semibold">Dashboard</span>
+    </div>
+  </div>
+
+  <!-- ── PAGE BODY ── -->
+  <main class="flex-1 px-4 md:px-6 py-5 space-y-6">
+
+    <!-- ══ STAT CARDS ══ -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="stat-card blue p-5">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
+            <i data-lucide="message-square" class="w-5 h-5 text-brand-700"></i>
+          </div>
+          <span class="text-xs font-semibold text-accent-600 bg-emerald-50 px-2 py-1 rounded-full inline-flex items-center gap-1">
+            <i data-lucide="trending-up" class="w-3 h-3"></i> +12%
+          </span>
+        </div>
+        <p class="text-3xl font-heading text-brand-800">248</p>
+        <p class="text-xs text-gray-500 mt-1 font-medium">Total Aduan Masuk</p>
+        <p class="text-xs text-gray-400 mt-0.5">Bulan ini</p>
+        <div class="stat-trend" style="--pct:75%"></div>
+      </div>
+
+      <div class="stat-card yellow p-5">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center">
+            <i data-lucide="clock" class="w-5 h-5 text-yellow-600"></i>
+          </div>
+          <span class="text-xs font-semibold text-yellow-700 bg-yellow-50 px-2 py-1 rounded-full inline-flex items-center gap-1.5">
+            <span class="live-dot" style="background:#F59E0B; box-shadow:0 0 0 0 rgba(245,158,11,0.7);"></span> Live
+          </span>
+        </div>
+        <p class="text-3xl font-heading text-yellow-700">47</p>
+        <p class="text-xs text-gray-500 mt-1 font-medium">Sedang Diproses</p>
+        <p class="text-xs text-gray-400 mt-0.5">Menunggu tindak lanjut</p>
+        <div class="stat-trend" style="--pct:42%; background:linear-gradient(90deg, #F59E0B var(--pct,50%), #FEF3C7 var(--pct,50%));"></div>
+      </div>
+
+      <div class="stat-card green p-5">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600"></i>
+          </div>
+          <span class="text-xs font-semibold text-accent-600 bg-emerald-50 px-2 py-1 rounded-full inline-flex items-center gap-1">
+            <i data-lucide="trending-up" class="w-3 h-3"></i> +8%
+          </span>
+        </div>
+        <p class="text-3xl font-heading text-emerald-700">186</p>
+        <p class="text-xs text-gray-500 mt-1 font-medium">Aduan Selesai</p>
+        <p class="text-xs text-gray-400 mt-0.5">75% dari total</p>
+        <div class="stat-trend" style="--pct:75%; background:linear-gradient(90deg, #059669 var(--pct,50%), #D1FAE5 var(--pct,50%));"></div>
+      </div>
+
+      <div class="stat-card red p-5">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+            <i data-lucide="x-circle" class="w-5 h-5 text-red-500"></i>
+          </div>
+          <span class="text-xs font-semibold text-red-500 bg-red-50 px-2 py-1 rounded-full inline-flex items-center gap-1">
+            <i data-lucide="trending-down" class="w-3 h-3"></i> -3%
+          </span>
+        </div>
+        <p class="text-3xl font-heading text-red-600">15</p>
+        <p class="text-xs text-gray-500 mt-1 font-medium">Ditolak / Invalid</p>
+        <p class="text-xs text-gray-400 mt-0.5">Perlu verifikasi</p>
+        <div class="stat-trend" style="--pct:18%; background:linear-gradient(90deg, #EF4444 var(--pct,50%), #FEE2E2 var(--pct,50%));"></div>
+      </div>
+    </div>
+
+    <!-- ══ CHARTS ROW ══ -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <!-- Bar Chart - Aduan per Minggu -->
+      <div class="chart-card p-5 lg:col-span-2 animate-slide-up">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="font-heading text-sm text-brand-800">Tren Aduan Masuk</h3>
+            <p class="text-xs text-gray-400">7 hari terakhir</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="hidden sm:flex items-center gap-3 text-xs text-gray-500 mr-2">
+              <span class="inline-flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-sm" style="background:rgba(26,79,138,0.8)"></span> Masuk
+              </span>
+              <span class="inline-flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-sm" style="background:rgba(5,150,105,0.75)"></span> Selesai
+              </span>
+            </div>
+            <select class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 text-gray-600 focus:ring-1 focus:ring-brand-400 outline-none bg-white hover:border-brand-300 transition-colors">
+              <option>7 Hari</option>
+              <option>30 Hari</option>
+              <option>3 Bulan</option>
+            </select>
+          </div>
+        </div>
+        <canvas id="chartBar" height="100"></canvas>
+      </div>
+
+      <!-- Doughnut - Kategori -->
+      <div class="chart-card p-5 animate-slide-up">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="font-heading text-sm text-brand-800">Kategori Aduan</h3>
+            <p class="text-xs text-gray-400">Distribusi bulan ini</p>
+          </div>
+        </div>
+        <canvas id="chartDoughnut" height="160"></canvas>
+        <div id="chart-legend" class="mt-4 space-y-1.5"></div>
+      </div>
+    </div>
+
+    <!-- ══ FILTER + SEARCH + TABLE ══ -->
+    <div class="bg-white rounded-2xl shadow-soft border border-brand-100/60 overflow-hidden animate-slide-up">
+      <!-- Filter Bar -->
+      <div class="px-5 py-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
+        <div class="flex items-center gap-2 mr-auto">
+          <div class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center">
+            <i data-lucide="inbox" class="w-4 h-4 text-brand-700"></i>
+          </div>
+          <div>
+            <h3 class="font-heading text-sm text-brand-800 leading-tight">Daftar Aduan Masuk</h3>
+            <p id="table-summary" class="text-[11px] text-gray-400">Total <span id="total-count" class="font-semibold text-gray-600">18</span> aduan terdaftar</p>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="relative">
+          <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"></i>
+          <input id="searchInput" type="text" placeholder="Cari nama / nomor / isi aduan…"
+            class="pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-300 focus:border-brand-400 outline-none w-56 transition-all"
+            oninput="filterTable()" />
+        </div>
+
+        <!-- Status Filter -->
+        <select id="statusFilter" onchange="filterTable()"
+          class="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-300 focus:border-brand-400 outline-none text-gray-600 bg-white hover:border-brand-300 transition-colors">
+          <option value="">Semua Status</option>
+          <option value="masuk">Masuk</option>
+          <option value="proses">Diproses</option>
+          <option value="selesai">Selesai</option>
+          <option value="ditolak">Ditolak</option>
+        </select>
+
+        <!-- Kategori Filter -->
+        <select id="kategoriFilter" onchange="filterTable()"
+          class="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-300 focus:border-brand-400 outline-none text-gray-600 bg-white hover:border-brand-300 transition-colors">
+          <option value="">Semua Kategori</option>
+          <option value="Infrastruktur">Infrastruktur</option>
+          <option value="Kesehatan">Kesehatan</option>
+          <option value="Pendidikan">Pendidikan</option>
+          <option value="Kebersihan">Kebersihan</option>
+          <option value="Keamanan">Keamanan</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+
+        <!-- Date Range -->
+        <div class="flex items-center gap-1.5 bg-gray-50 rounded-lg p-1 border border-gray-200">
+          <input type="date" id="dateFrom" onchange="filterTable()"
+            class="text-xs border-0 bg-transparent px-2 py-1.5 focus:ring-0 outline-none text-gray-600" />
+          <span class="text-gray-400 text-xs">–</span>
+          <input type="date" id="dateTo" onchange="filterTable()"
+            class="text-xs border-0 bg-transparent px-2 py-1.5 focus:ring-0 outline-none text-gray-600" />
+        </div>
+
+        <button onclick="resetFilter()" class="text-sm text-brand-500 hover:text-brand-700 font-medium flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-brand-50 transition-colors">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Reset
+        </button>
+        <button onclick="exportCSV()" class="sm:hidden flex items-center gap-1.5 px-3 py-2 rounded-lg bg-accent-500 text-white text-sm font-semibold">
+          <i data-lucide="download" class="w-4 h-4"></i> Export
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
+        <table id="aduanTable">
+          <thead>
+            <tr>
+              <th>No Tiket</th>
+              <th>Tanggal</th>
+              <th>Nama Pelapor</th>
+              <th>No. WhatsApp</th>
+              <th>Kategori</th>
+              <th>Isi Aduan</th>
+              <th>Status</th>
+              <th class="text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Empty state -->
+      <div id="emptyState" class="hidden py-16 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="inbox" class="w-8 h-8 text-gray-300"></i>
+        </div>
+        <p class="text-gray-500 font-medium">Tidak ada aduan ditemukan</p>
+        <p class="text-gray-400 text-sm mt-1">Coba ubah filter atau kata kunci pencarian</p>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-5 py-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3">
+        <p id="paginationInfo" class="text-xs text-gray-500"></p>
+        <div class="flex items-center gap-1" id="paginationControls"></div>
+      </div>
+    </div>
+
+    <!-- ══ FOOTER ══ -->
+    <footer class="text-center text-xs text-gray-400 pb-4">
+      © 2025 Dinas Komunikasi dan Informatika Kabupaten Subang &nbsp;·&nbsp; Bot Aduan WhatsApp v1.0
+    </footer>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MODAL DETAIL ADUAN
+════════════════════════════════════════════ -->
+<div id="modal-backdrop" class="fixed inset-0 bg-black/40 z-50 hidden flex items-center justify-center p-4" onclick="closeModalOutside(event)">
+  <div id="modal-box" class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-brand-700 to-brand-600 rounded-t-2xl relative overflow-hidden">
+      <div class="absolute inset-0 opacity-10" style="background-image:radial-gradient(circle at 1px 1px, #fff 1px, transparent 0); background-size:18px 18px;"></div>
+      <div class="relative z-10">
+        <h2 class="font-heading text-white text-base">Detail Aduan</h2>
+        <p class="text-blue-200 text-xs mt-0.5">Informasi lengkap pengaduan masyarakat</p>
+      </div>
+      <button onclick="closeModal()" class="relative z-10 text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <div id="modal-content" class="px-6 py-5 space-y-4 text-sm"></div>
+    <div class="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end flex-wrap bg-gray-50/50 rounded-b-2xl">
+      <button onclick="closeModal()" class="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">Tutup</button>
+      <button onclick="updateStatus('proses')" class="px-4 py-2 rounded-lg bg-yellow-100 text-yellow-700 hover:bg-yellow-200 text-sm font-semibold transition-colors inline-flex items-center gap-1.5">
+        <i data-lucide="clock" class="w-3.5 h-3.5"></i> Tandai Diproses
+      </button>
+      <button onclick="updateStatus('selesai')" class="px-4 py-2 rounded-lg bg-accent-500 text-white hover:bg-accent-600 text-sm font-semibold transition-colors inline-flex items-center gap-1.5">
+        <i data-lucide="check" class="w-3.5 h-3.5"></i> Tandai Selesai
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST CONTAINER ══ -->
+<div id="toast-container"></div>
+
+<!-- ══ SCROLL TO TOP ══ -->
+<button id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Kembali ke atas" class="no-print">
+  <i data-lucide="chevron-up" class="w-5 h-5"></i>
+</button>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+// ── Init Lucide ──
+lucide.createIcons();
+
+// ── Live date ──
+function updateDate() {
+  const el = document.getElementById('live-date');
+  if (!el) return;
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+  el.querySelector('span').textContent = dateStr;
+}
+updateDate();
+setInterval(updateDate, 60000);
+
+// ── DUMMY DATA ──
+const DUMMY_DATA = [
+  { id:'ADU-2025-001', tanggal:'2025-06-01', nama:'Budi Santoso',      hp:'0812-3456-7890', kategori:'Infrastruktur', aduan:'Jalan di Jl. Raya Subang km 4 berlubang dan membahayakan pengendara motor.', status:'selesai' },
+  { id:'ADU-2025-002', tanggal:'2025-06-02', nama:'Siti Rahayu',       hp:'0813-2233-4455', kategori:'Kebersihan',   aduan:'Tempat pembuangan sampah liar di RT 03 RW 05 Kelurahan Karanganyar bau sangat menyengat.', status:'proses' },
+  { id:'ADU-2025-003', tanggal:'2025-06-02', nama:'Ahmad Fauzi',       hp:'0822-9988-7766', kategori:'Keamanan',     aduan:'Lampu jalan di Gang Mawar sudah mati lebih dari 2 minggu, rawan kejahatan malam hari.', status:'masuk' },
+  { id:'ADU-2025-004', tanggal:'2025-06-03', nama:'Dewi Lestari',      hp:'0856-7788-9900', kategori:'Kesehatan',    aduan:'Antrean puskesmas sangat panjang, loket pendaftaran hanya buka 1 dari 3 loket tersedia.', status:'selesai' },
+  { id:'ADU-2025-005', tanggal:'2025-06-03', nama:'Rudi Hermawan',     hp:'0878-1122-3344', kategori:'Pendidikan',   aduan:'Atap gedung SDN 5 Subang bocor parah ketika hujan, mengganggu kegiatan belajar mengajar.', status:'proses' },
+  { id:'ADU-2025-006', tanggal:'2025-06-04', nama:'Neneng Suryani',    hp:'0819-5566-7788', kategori:'Infrastruktur', aduan:'Gorong-gorong di Jl. Pemuda tersumbat sampah menyebabkan banjir setiap hujan turun.', status:'masuk' },
+  { id:'ADU-2025-007', tanggal:'2025-06-04', nama:'Hendra Kusuma',     hp:'0821-3344-5566', kategori:'Lainnya',      aduan:'Ijin usaha warung saya ditolak tanpa alasan jelas, sudah 3 bulan belum ada kejelasan.', status:'ditolak' },
+  { id:'ADU-2025-008', tanggal:'2025-06-05', nama:'Rina Marlina',      hp:'0831-2222-3333', kategori:'Kebersihan',   aduan:'Truk sampah tidak pernah masuk ke perumahan kami selama 2 minggu terakhir.', status:'selesai' },
+  { id:'ADU-2025-009', tanggal:'2025-06-05', nama:'Asep Gunawan',      hp:'0857-4455-6677', kategori:'Keamanan',     aduan:'Pos keamanan RW sudah tidak berfungsi dan tidak ada petugas. Warga resah.', status:'masuk' },
+  { id:'ADU-2025-010', tanggal:'2025-06-06', nama:'Yanti Kusumawati',  hp:'0812-8899-0011', kategori:'Infrastruktur', aduan:'Drainase di perumahan Taman Subang Indah meluap setiap kali hujan lebat.', status:'proses' },
+  { id:'ADU-2025-011', tanggal:'2025-06-06', nama:'Dedi Permana',      hp:'0878-3344-5566', kategori:'Kesehatan',    aduan:'Stok obat generik di puskesmas Cibogo sering kosong, warga terpaksa beli di apotek.', status:'selesai' },
+  { id:'ADU-2025-012', tanggal:'2025-06-07', nama:'Ida Farida',        hp:'0821-7788-9900', kategori:'Pendidikan',   aduan:'Guru honorer di SMPN 2 sudah 4 bulan tidak menerima tunjangan yang dijanjikan.', status:'masuk' },
+  { id:'ADU-2025-013', tanggal:'2025-06-07', nama:'Ujang Suparman',    hp:'0813-6677-8899', kategori:'Lainnya',      aduan:'Air PDAM sering keruh dan berbau. Laporan sudah dibuat tapi tidak ada tindakan.', status:'proses' },
+  { id:'ADU-2025-014', tanggal:'2025-06-08', nama:'Sri Mulyani',       hp:'0856-1122-3344', kategori:'Infrastruktur', aduan:'Jembatan kecil di Desa Sukamandi kondisinya sudah sangat memprihatinkan dan berbahaya.', status:'masuk' },
+  { id:'ADU-2025-015', tanggal:'2025-06-08', nama:'Bambang Purnomo',   hp:'0819-8899-0011', kategori:'Kebersihan',   aduan:'Pasar Subang pada hari libur sangat kotor, petugas kebersihan tidak ada yang bertugas.', status:'ditolak' },
+  { id:'ADU-2025-016', tanggal:'2025-06-09', nama:'Lilis Sulistyawati',hp:'0857-5566-7788', kategori:'Keamanan',     aduan:'CCTV di taman kota sudah tidak berfungsi lebih dari sebulan, sering terjadi tindak kriminal.', status:'masuk' },
+  { id:'ADU-2025-017', tanggal:'2025-06-09', nama:'Endang Wahyuni',    hp:'0812-4455-6677', kategori:'Infrastruktur', aduan:'Penerangan jalan umum di Jl. Oto Iskandar Dinata padam sejak seminggu yang lalu.', status:'proses' },
+  { id:'ADU-2025-018', tanggal:'2025-06-09', nama:'Cecep Hidayat',     hp:'0878-0011-2233', kategori:'Lainnya',      aduan:'Keluhan terkait pelayanan KTP-el yang lambat, sudah menunggu 3 bulan belum jadi.', status:'masuk' },
+];
+
+// ── State ──
+let filteredData = [...DUMMY_DATA];
+let currentPage  = 1;
+const PER_PAGE   = 8;
+let activeRow    = null;
+
+// ── Update table summary ──
+function updateTableSummary() {
+  const el = document.getElementById('total-count');
+  if (el) el.textContent = DUMMY_DATA.length;
+}
+
+// ── Render Table ──
+function renderTable() {
+  const body  = document.getElementById('tableBody');
+  const start = (currentPage - 1) * PER_PAGE;
+  const end   = start + PER_PAGE;
+  const paged = filteredData.slice(start, end);
+
+  document.getElementById('emptyState').classList.toggle('hidden', paged.length > 0);
+
+  if (!paged.length) { body.innerHTML = ''; return; }
+
+  body.innerHTML = paged.map((d, i) => `
+    <tr data-id="${d.id}" class="cursor-pointer" onclick="openModal('${d.id}')">
+      <td class="font-mono text-xs text-brand-700 font-semibold">${d.id}</td>
+      <td class="text-xs text-gray-500 whitespace-nowrap">${formatDate(d.tanggal)}</td>
+      <td class="font-medium whitespace-nowrap">${d.nama}</td>
+      <td class="text-xs text-gray-500">${d.hp}</td>
+      <td>
+        <span class="text-xs bg-brand-50 text-brand-700 px-2 py-0.5 rounded-full font-medium">${d.kategori}</span>
+      </td>
+      <td class="max-w-xs">
+        <p class="truncate text-gray-600 text-xs" title="${escHtml(d.aduan)}">${d.aduan}</p>
+      </td>
+      <td><span class="badge badge-${d.status}">${statusLabel(d.status)}</span></td>
+      <td class="text-center">
+        <div class="flex items-center justify-center gap-1">
+          <button onclick="event.stopPropagation(); openModal('${d.id}')" class="p-1.5 rounded-lg hover:bg-brand-50 text-brand-500 transition-colors" title="Detail">
+            <i data-lucide="eye" class="w-4 h-4"></i>
+          </button>
+          <button onclick="event.stopPropagation(); confirmDelete('${d.id}')" class="p-1.5 rounded-lg hover:bg-red-50 text-red-400 transition-colors" title="Hapus">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  lucide.createIcons();
+  renderPagination();
+}
+
+// ── Pagination ──
+function renderPagination() {
+  const total     = filteredData.length;
+  const totalPage = Math.ceil(total / PER_PAGE);
+  const start     = (currentPage - 1) * PER_PAGE + 1;
+  const end       = Math.min(currentPage * PER_PAGE, total);
+
+  document.getElementById('paginationInfo').textContent =
+    total ? `Menampilkan ${start}–${end} dari ${total} aduan` : 'Tidak ada data';
+
+  const ctrl = document.getElementById('paginationControls');
+  let html = '';
+
+  // Prev
+  html += `<button onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''} class="px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs transition-colors ${currentPage===1?'opacity-40 cursor-not-allowed':'hover:bg-brand-50 text-brand-700 hover:border-brand-300'}">
+    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+  </button>`;
+
+  // Page numbers
+  for (let p = 1; p <= totalPage; p++) {
+    if (totalPage > 7 && p > 2 && p < totalPage - 1 && Math.abs(p - currentPage) > 1) {
+      if (p === 3 || p === totalPage - 2) html += `<span class="px-1.5 text-gray-400 text-xs">…</span>`;
+      continue;
+    }
+    html += `<button onclick="goPage(${p})" class="px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${p===currentPage?'bg-brand-700 border-brand-700 text-white shadow-md':'border-gray-200 hover:bg-brand-50 text-gray-600 hover:border-brand-300'}">${p}</button>`;
+  }
+
+  // Next
+  html += `<button onclick="goPage(${currentPage+1})" ${currentPage===totalPage?'disabled':''} class="px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs transition-colors ${currentPage===totalPage?'opacity-40 cursor-not-allowed':'hover:bg-brand-50 text-brand-700 hover:border-brand-300'}">
+    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+  </button>`;
+
+  ctrl.innerHTML = html;
+  lucide.createIcons();
+}
+
+function goPage(p) {
+  const total = Math.ceil(filteredData.length / PER_PAGE);
+  if (p < 1 || p > total) return;
+  currentPage = p;
+  renderTable();
+}
+
+// ── Filter & Search ──
+function filterTable() {
+  const q   = document.getElementById('searchInput').value.toLowerCase();
+  const st  = document.getElementById('statusFilter').value;
+  const kat = document.getElementById('kategoriFilter').value;
+  const df  = document.getElementById('dateFrom').value;
+  const dt  = document.getElementById('dateTo').value;
+
+  filteredData = DUMMY_DATA.filter(d => {
+    const matchQ   = !q  || [d.id,d.nama,d.hp,d.aduan,d.kategori].some(f=>f.toLowerCase().includes(q));
+    const matchSt  = !st  || d.status === st;
+    const matchKat = !kat || d.kategori === kat;
+    const matchDf  = !df  || d.tanggal >= df;
+    const matchDt  = !dt  || d.tanggal <= dt;
+    return matchQ && matchSt && matchKat && matchDf && matchDt;
+  });
+
+  currentPage = 1;
+  renderTable();
+}
+
+function resetFilter() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('statusFilter').value = '';
+  document.getElementById('kategoriFilter').value = '';
+  document.getElementById('dateFrom').value = '';
+  document.getElementById('dateTo').value = '';
+  filteredData = [...DUMMY_DATA];
+  currentPage = 1;
+  renderTable();
+}
+
+// ── Modal ──
+function openModal(id) {
+  const d = DUMMY_DATA.find(x => x.id === id);
+  if (!d) return;
+  activeRow = d;
+
+  const icon = { masuk:'📩', proses:'⏳', selesai:'✅', ditolak:'❌' };
+  document.getElementById('modal-content').innerHTML = `
+    <div class="grid grid-cols-2 gap-3 text-sm">
+      <div class="col-span-2 p-3 bg-brand-50 rounded-xl border border-brand-100">
+        <p class="text-[10px] text-brand-500 font-semibold uppercase tracking-wider mb-1">No. Tiket</p>
+        <p class="font-heading text-brand-800 text-base">${d.id}</p>
+      </div>
+      <div>
+        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-1">Nama</p>
+        <p class="font-medium text-gray-800">${d.nama}</p>
+      </div>
+      <div>
+        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-1">No. WhatsApp</p>
+        <p class="text-gray-700">${d.hp}</p>
+      </div>
+      <div>
+        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-1">Tanggal Masuk</p>
+        <p class="text-gray-700">${formatDate(d.tanggal)}</p>
+      </div>
+      <div>
+        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-1">Kategori</p>
+        <p><span class="badge badge-masuk">${d.kategori}</span></p>
+      </div>
+      <div class="col-span-2">
+        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-1">Isi Aduan</p>
+        <p class="text-gray-700 leading-relaxed bg-gray-50 p-3 rounded-lg border border-gray-100">${d.aduan}</p>
+      </div>
+      <div class="col-span-2">
+        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-1">Status Saat Ini</p>
+        <span class="badge badge-${d.status}">${icon[d.status]} ${statusLabel(d.status)}</span>
+      </div>
+    </div>
+  `;
+
+  const backdrop = document.getElementById('modal-backdrop');
+  backdrop.classList.remove('hidden');
+  setTimeout(() => backdrop.style.opacity = '1', 10);
+  lucide.createIcons();
+}
+
+function closeModal() {
+  const backdrop = document.getElementById('modal-backdrop');
+  backdrop.style.opacity = '0';
+  setTimeout(() => backdrop.classList.add('hidden'), 250);
+  activeRow = null;
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modal-backdrop')) closeModal();
+}
+
+function updateStatus(newStatus) {
+  if (!activeRow) return;
+  const idx = DUMMY_DATA.findIndex(x => x.id === activeRow.id);
+  if (idx > -1) {
+    DUMMY_DATA[idx].status = newStatus;
+    filteredData = filteredData.map(x => x.id === activeRow.id ? {...x, status: newStatus} : x);
+    renderTable();
+    closeModal();
+    showToast(`Aduan ${activeRow.id} diperbarui ke "${statusLabel(newStatus)}"`, 'success');
+  }
+}
+
+function confirmDelete(id) {
+  if (!confirm(`Hapus aduan ${id}? Tindakan ini tidak dapat dibatalkan.`)) return;
+  const i = DUMMY_DATA.findIndex(x=>x.id===id);
+  if (i>-1) DUMMY_DATA.splice(i,1);
+  filteredData = filteredData.filter(x=>x.id!==id);
+  renderTable();
+  showToast(`Aduan ${id} telah dihapus.`, 'warning');
+}
+
+// ── Sidebar ──
+function openSidebar() {
+  const s = document.getElementById('sidebar');
+  const o = document.getElementById('sidebar-overlay');
+  s.classList.add('open');
+  o.classList.remove('hidden');
+  setTimeout(() => o.style.opacity = '1', 10);
+}
+
+function closeSidebar() {
+  const s = document.getElementById('sidebar');
+  const o = document.getElementById('sidebar-overlay');
+  s.classList.remove('open');
+  o.style.opacity = '0';
+  setTimeout(() => o.classList.add('hidden'), 300);
+}
+
+// ── Notification dropdown ──
+function toggleNotif() {
+  const dd = document.getElementById('notif-dropdown');
+  if (!dd) return;
+  dd.classList.toggle('hidden');
+}
+document.addEventListener('click', (e) => {
+  const dd = document.getElementById('notif-dropdown');
+  if (!dd || dd.classList.contains('hidden')) return;
+  if (!e.target.closest('#notif-dropdown') && !e.target.closest('[onclick*="toggleNotif"]')) {
+    dd.classList.add('hidden');
+  }
+});
+
+// ── Section placeholder ──
+function showSection(name) {
+  showToast(`Navigasi ke section "${name}"`, 'info');
+  closeSidebar();
+}
+
+// ── Scroll to top ──
+const scrollBtn = document.getElementById('scrollTopBtn');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 320) scrollBtn.classList.add('show');
+  else scrollBtn.classList.remove('show');
+});
+
+// ── Toast ──
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  // Limit to 5 toasts
+  const existing = container.querySelectorAll('.toast:not(.hide)');
+  if (existing.length >= 5) dismissToast(existing[0]);
+
+  const icons = { info: 'info', success: 'check-circle', warning: 'alert-triangle', error: 'x-circle' };
+  const colors = { info: 'text-brand-600', success: 'text-emerald-600', warning: 'text-yellow-600', error: 'text-red-500' };
+
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `
+    <i data-lucide="${icons[type]}" class="w-5 h-5 mt-0.5 flex-shrink-0 ${colors[type]}"></i>
+    <div class="flex-1 min-w-0">
+      <p class="text-sm font-medium text-gray-800 leading-snug">${msg}</p>
+    </div>
+    <button onclick="dismissToast(this.parentElement)" class="text-gray-300 hover:text-gray-500 flex-shrink-0 ml-1 p-0.5 rounded transition-colors">
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+  `;
+  container.appendChild(el);
+  lucide.createIcons();
+
+  setTimeout(() => dismissToast(el), 4500);
+}
+
+function dismissToast(el) {
+  if (!el || el.classList.contains('hide')) return;
+  el.classList.add('hide');
+  setTimeout(() => el.remove(), 320);
+}
+
+// ── Export CSV ──
+function exportCSV() {
+  const headers = ['No Tiket','Tanggal','Nama','No WA','Kategori','Aduan','Status'];
+  const rows = filteredData.map(d => [d.id, d.tanggal, d.nama, d.hp, d.kategori, `"${d.aduan.replace(/"/g,'""')}"`, statusLabel(d.status)]);
+  const csv  = [headers.join(','), ...rows.map(r=>r.join(','))].join('\n');
+  const blob = new Blob(['﻿'+csv], { type:'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = Object.assign(document.createElement('a'), { href:url, download:`rekap-aduan-${new Date().toISOString().slice(0,10)}.csv` });
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`Export berhasil! ${filteredData.length} data diunduh.`, 'success');
+}
+
+// ── Helpers ──
+function statusLabel(s) {
+  return { masuk:'Baru Masuk', proses:'Diproses', selesai:'Selesai', ditolak:'Ditolak' }[s] || s;
+}
+function formatDate(d) {
+  return new Date(d+'T00:00:00').toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+}
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── CHARTS ──
+// Bar chart – Tren 7 hari
+(function() {
+  const ctx = document.getElementById('chartBar').getContext('2d');
+  const labels = ['Sen 3','Sel 4','Rab 5','Kam 6','Jum 7','Sab 8','Min 9'];
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Masuk',
+          data: [12, 8, 15, 10, 18, 7, 9],
+          backgroundColor: 'rgba(26,79,138,0.8)',
+          borderRadius: 6, borderSkipped: false,
+          maxBarThickness: 28,
+        },
+        {
+          label: 'Selesai',
+          data: [8, 6, 12, 9, 14, 5, 7],
+          backgroundColor: 'rgba(5,150,105,0.75)',
+          borderRadius: 6, borderSkipped: false,
+          maxBarThickness: 28,
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(15,45,82,0.95)',
+          padding: 10,
+          titleFont: { family: 'Inter', size: 12, weight: '600' },
+          bodyFont: { family: 'Inter', size: 12 },
+          cornerRadius: 8,
+          callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} aduan` }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { family: 'Inter', size: 11 }, color: '#64748B' }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(0,0,0,.05)' },
+          ticks: { font: { family: 'Inter', size: 11 }, stepSize: 5, color: '#64748B' }
+        }
+      }
+    }
+  });
+})();
+
+// Doughnut – Kategori
+(function() {
+  const ctx = document.getElementById('chartDoughnut').getContext('2d');
+  const labels = ['Infrastruktur','Kebersihan','Keamanan','Kesehatan','Pendidikan','Lainnya'];
+  const values = [72, 45, 38, 31, 28, 34];
+  const colors = ['#1A4F8A','#059669','#F59E0B','#EF4444','#8B5CF6','#64748B'];
+
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colors,
+        borderWidth: 3,
+        borderColor: '#fff',
+        hoverBorderColor: '#fff',
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      cutout: '65%',
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(15,45,82,0.95)',
+          padding: 10,
+          titleFont: { family: 'Inter', size: 12, weight: '600' },
+          bodyFont: { family: 'Inter', size: 12 },
+          cornerRadius: 8,
+          callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} aduan` }
+        }
+      }
+    }
+  });
+
+  // Custom legend
+  const legend = document.getElementById('chart-legend');
+  legend.innerHTML = labels.map((l,i) => {
+    const pct = Math.round(values[i] / values.reduce((a,b)=>a+b,0) * 100);
+    return `<div class="flex items-center justify-between text-xs hover:bg-gray-50 px-1.5 py-1 rounded transition-colors">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="w-3 h-3 rounded-sm flex-shrink-0" style="background:${colors[i]}"></span>
+        <span class="text-gray-600 truncate">${l}</span>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0 ml-2">
+        <span class="text-gray-800 font-semibold">${values[i]}</span>
+        <span class="text-gray-400 text-[10px]">${pct}%</span>
+      </div>
+    </div>`;
+  }).join('');
+})();
+
+// ── Initial render ──
+renderTable();
+updateTableSummary();
+
+// ── Demo toasts on load ──
+setTimeout(() => showToast('Selamat datang di Dashboard Bot Aduan!', 'success'), 800);
+setTimeout(() => showToast('3 aduan baru belum ditindaklanjuti.', 'warning'), 2000);
+</script>
+</body>
+</html>
