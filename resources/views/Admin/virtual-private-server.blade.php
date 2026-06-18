@@ -1,17 +1,27 @@
 <x-layouts.modern>
-  <div class="bg-white rounded-2xl shadow-sm border border-brand-100 overflow-hidden">
-    <div class="px-5 py-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
-      <h3 class="font-heading text-sm text-brand-800 mr-auto">Daftar Permohonan Virtual Private Server</h3>
+  <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h2 class="text-xl font-heading font-bold text-slate-800">Virtual Private Server</h2>
+      <p class="text-sm text-slate-500">Daftar permohonan Virtual Private Server (VPS).</p>
     </div>
-    <div class="overflow-x-auto">
-      <table>
+    <div class="flex items-center gap-2 text-sm text-slate-500">
+      <span>Home</span> <i data-lucide="chevron-right" class="w-3 h-3"></i> <span class="font-semibold text-slate-700">Virtual Private Server</span>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-box shadow-soft border border-slate-200 overflow-hidden">
+    <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+      <h3 class="font-heading font-bold text-sm text-slate-800">Data Virtual Private Server</h3>
+    </div>
+    <div class="p-5 overflow-x-auto">
+      <table class="w-full text-left border-collapse data-table">
         <thead>
           <tr>
-            <th>Tiket</th>
-            <th>Nama Lengkap</th>
-            <th>Instansi</th>
-            <th>Status</th>
-            <th>Aksi</th>
+            <th class="px-5 py-3 border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tiket</th>
+            <th class="px-5 py-3 border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nama Lengkap</th>
+            <th class="px-5 py-3 border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Instansi</th>
+            <th class="px-5 py-3 border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
+            <th class="px-5 py-3 border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aksi</th>
           </tr>
         </thead>
         <tbody>
@@ -22,9 +32,9 @@
             <td class="text-xs text-gray-500">{{ $item->instansi }}</td>
             <td>
               @if($item->status == '1')
-                <span class="badge badge-selesai">Selesai</span>
+                <span class="px-2 py-1 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 uppercase tracking-wide">Selesai</span>
               @else
-                <span class="badge badge-masuk">Open</span>
+                <span class="px-2 py-1 text-[10px] font-bold rounded-md bg-orange-100 text-orange-700 uppercase tracking-wide">Open</span>
               @endif
             </td>
             <td class="flex gap-2 items-center">
@@ -74,7 +84,7 @@
       if(!item) return;
       document.getElementById('modal-title').innerText = 'Ubah Status - ' + item.nomor_tiket;
       
-      const statusHtml = item.status == '1' ? '<span class="badge badge-selesai">Selesai</span>' : '<span class="badge badge-masuk">Open</span>';
+      const statusHtml = item.status == '1' ? '<span class="px-2 py-1 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 uppercase tracking-wide">Selesai</span>' : '<span class="px-2 py-1 text-[10px] font-bold rounded-md bg-orange-100 text-orange-700 uppercase tracking-wide">Open</span>';
       
       document.getElementById('modal-content').innerHTML = `
         <p><strong>Status Saat Ini:</strong> ${statusHtml}</p>

@@ -4,94 +4,84 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard — Diskominfo Subang</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.js"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { heading: ['Poppins', 'sans-serif'], body: ['Inter', 'sans-serif'] },
-          colors: {
-            brand: { 50:'#EEF4FC', 100:'#D6E5F7', 200:'#AECBEF', 300:'#7DAEE5', 400:'#4D90DA', 500:'#2272CE', 600:'#1A5AA8', 700:'#1A4F8A', 800:'#153F70', 900:'#0F2D52' },
-            accent: { 400:'#34D399', 500:'#10B981', 600:'#059669' },
-            warn: { 500:'#F59E0B' }, danger: { 500:'#EF4444' },
-          },
-        }
-      }
-    };
-  </script>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; }
-    h1, h2, h3, .font-heading { font-family: 'Poppins', sans-serif; }
-    .page-bg { background: linear-gradient(145deg, #EEF4FC 0%, #F0FBF6 40%, #FAFFFE 100%); min-height: 100vh; }
-    .header-banner { background: linear-gradient(135deg, #1A4F8A 0%, #1A5AA8 45%, #0F9068 100%); }
-    .stat-card { background: #fff; border-radius: 14px; border-top: 4px solid transparent; box-shadow: 0 2px 14px rgba(26,79,138,0.08); transition: transform .18s, box-shadow .18s; }
-    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(26,79,138,0.13); }
-    .stat-card.blue { border-top-color: #1A4F8A; } .stat-card.green { border-top-color: #059669; } .stat-card.yellow { border-top-color: #F59E0B; } .stat-card.red { border-top-color: #EF4444; }
-    .chart-card { background: #fff; border-radius: 14px; box-shadow: 0 2px 14px rgba(26,79,138,0.08); }
-    .tbl-wrap { border-radius: 14px; overflow: hidden; box-shadow: 0 2px 14px rgba(26,79,138,0.08); }
-    table { border-collapse: collapse; width: 100%; }
-    thead th { background: linear-gradient(90deg, #1A4F8A, #1A5AA8); color: #fff; font-size: .8rem; letter-spacing: .05em; text-transform: uppercase; padding: 12px 16px; text-align: left; font-family: 'Poppins', sans-serif; white-space: nowrap; }
-    tbody tr { border-bottom: 1px solid #EEF4FC; background: #fff; }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: #F5F9FF; }
-    tbody td { padding: 11px 16px; font-size: .875rem; color: #374151; vertical-align: middle; }
-    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; font-size: .72rem; font-weight: 600; letter-spacing: .03em; }
-    .badge-masuk { background: #DBEAFE; color: #1D4ED8; }
-    .badge-proses { background: #FEF3C7; color: #B45309; }
-    .badge-selesai { background: #D1FAE5; color: #065F46; }
-    .badge-ditolak { background: #FEE2E2; color: #B91C1C; }
-    #sidebar { transition: transform .28s cubic-bezier(.4,0,.2,1); }
-    #sidebar-overlay { transition: opacity .28s; }
-    #toast-container { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 10px; z-index: 9999; pointer-events: none; }
-    .toast { display: flex; align-items: flex-start; gap: 10px; padding: 13px 16px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.15); background: #fff; min-width: 260px; max-width: 340px; pointer-events: all; animation: slideIn .3s ease forwards; border-left: 4px solid #1A4F8A; }
-    .toast.success { border-left-color: #059669; } .toast.warning { border-left-color: #F59E0B; } .toast.error { border-left-color: #EF4444; }
-    @keyframes slideIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(110%); opacity: 0; } }
+    body { background-color: #F8FAFC; color: #334155; }
+    
+    .rounded-box { border-radius: 1.25rem; }
+    .shadow-soft { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid #E2E8F0; }
+    
+    .stat-card { background: #FFFFFF; transition: all 0.2s; position: relative; overflow: hidden; }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02); border-color: #cbd5e1; }
+    
+    /* Density adjustments */
+    .dense-p { padding: 1rem; }
+    .dense-gap { gap: 0.75rem; }
+    
+    table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    thead th { background-color: #F1F5F9; color: #475569; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #E2E8F0; }
+    thead th:first-child { border-top-left-radius: 1rem; }
+    thead th:last-child { border-top-right-radius: 1rem; }
+    tbody tr { background: #FFFFFF; transition: background-color 0.15s; }
+    tbody tr:hover { background: #F8FAFC; }
+    tbody td { padding: 0.75rem 1rem; font-size: 0.875rem; color: #334155; border-bottom: 1px solid #E2E8F0; vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+    
+    #sidebar { transition: transform .25s ease-in-out; }
+    #sidebar-overlay { transition: opacity .25s; }
+    
+    #toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; z-index: 9999; pointer-events: none; }
+    .toast { display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem; border-radius: 1rem; background: #FFFFFF; border: 1px solid #E2E8F0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); min-width: 250px; pointer-events: all; animation: slideIn .3s ease forwards; }
+    @keyframes slideIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes slideOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100%); opacity: 0; } }
     .toast.hide { animation: slideOut .3s ease forwards; }
-    #modal-backdrop { transition: opacity .2s; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #F1F5F9; }
-    ::-webkit-scrollbar-thumb { background: #AECBEF; border-radius: 6px; }
+    
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     @media (max-width: 1023px) { #sidebar { transform: translateX(-100%); } #sidebar.open { transform: translateX(0); } }
   </style>
   @yield('Css')
 </head>
-<body class="page-bg font-body">
+<body class="font-body antialiased selection:bg-blue-100 selection:text-blue-900 flex min-h-screen">
 
-<div id="sidebar-overlay" class="fixed inset-0 bg-black/30 z-30 hidden opacity-0 lg:hidden" onclick="closeSidebar()"></div>
+<div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/40 z-30 hidden opacity-0 lg:hidden backdrop-blur-sm transition-opacity" onclick="closeSidebar()"></div>
 
 <x-layouts.sidebar />
 
-<div class="lg:pl-64 min-h-screen flex flex-col">
-  <header class="header-banner text-white px-5 py-0">
-    <div class="flex items-center gap-3 py-4">
-      <button onclick="openSidebar()" class="lg:hidden p-2 rounded-lg bg-white/15 hover:bg-white/25 transition-colors mr-1">
-        <i data-lucide="menu" class="w-5 h-5"></i>
-      </button>
-      <div class="flex items-center gap-3 flex-1">
+<div class="lg:pl-[260px] w-full flex flex-col min-h-screen bg-slate-50 transition-all duration-300">
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-sm">
+    <div class="flex items-center justify-between px-4 sm:px-6 h-16">
+      <div class="flex items-center gap-4">
+        <button onclick="openSidebar()" class="lg:hidden p-2 -ml-2 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
         <div class="hidden sm:flex flex-col">
-          <span class="font-heading text-lg leading-tight">Dashboard Bot Aduan WhatsApp</span>
-          <span class="text-blue-200 text-xs">Dinas Komunikasi dan Informatika — Kabupaten Subang</span>
+          <h1 class="font-heading font-bold text-slate-800 text-lg tracking-tight">Dashboard Bot Aduan</h1>
+          <p class="text-slate-500 text-[11px] font-medium uppercase tracking-wider">Diskominfo Subang</p>
         </div>
       </div>
-      <div class="flex items-center gap-3 ml-auto">
-        <span id="live-date" class="hidden md:block text-xs text-blue-200"></span>
+      <div class="flex items-center gap-4">
+        <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full border border-slate-200">
+          <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
+          <span id="live-date" class="text-xs font-medium text-slate-600"></span>
+        </div>
+        <!-- Profile simple dropdown or avatar -->
+        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-heading text-xs font-bold shadow-sm cursor-pointer border-2 border-white ring-1 ring-slate-200">
+          {{ substr(auth()->user()->name ?? 'A', 0, 1) }}
+        </div>
       </div>
     </div>
   </header>
 
-  <main class="flex-1 px-4 md:px-6 py-6 space-y-6">
+  <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
     {{ $slot }}
-
-    <footer class="text-center text-xs text-gray-400 pb-4 mt-8">
-      © 2025 Dinas Komunikasi dan Informatika Kabupaten Subang
-    </footer>
   </main>
 </div>
 
@@ -100,20 +90,21 @@
 <script>
   lucide.createIcons();
   function openSidebar() { document.getElementById('sidebar').classList.add('open'); const o = document.getElementById('sidebar-overlay'); o.classList.remove('hidden'); setTimeout(() => o.style.opacity = '1', 10); }
-  function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); const o = document.getElementById('sidebar-overlay'); o.style.opacity = '0'; setTimeout(() => o.classList.add('hidden'), 280); }
-  function updateDate() { const el = document.getElementById('live-date'); if(el) el.textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }); }
+  function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); const o = document.getElementById('sidebar-overlay'); o.style.opacity = '0'; setTimeout(() => o.classList.add('hidden'), 250); }
+  function updateDate() { const el = document.getElementById('live-date'); if(el) el.textContent = new Date().toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }); }
   updateDate(); setInterval(updateDate, 60000);
   function showToast(msg, type = 'info') {
       const container = document.getElementById('toast-container');
       if(!container) return;
       const icons = { info: 'info', success: 'check-circle', warning: 'alert-triangle', error: 'x-circle' };
-      const colors = { info: 'text-brand-600', success: 'text-emerald-600', warning: 'text-yellow-600', error: 'text-red-500' };
+      const colors = { info: 'text-blue-500', success: 'text-teal-500', warning: 'text-orange-500', error: 'text-rose-500' };
+      const bg = { info: 'bg-blue-50', success: 'bg-teal-50', warning: 'bg-orange-50', error: 'bg-rose-50' };
       const el = document.createElement('div');
-      el.className = `toast ${type}`;
-      el.innerHTML = `<i data-lucide="${icons[type]}" class="w-5 h-5 mt-0.5 flex-shrink-0 ${colors[type]}"></i><div class="flex-1 min-w-0"><p class="text-sm font-medium text-gray-800 leading-snug">${msg}</p></div><button onclick="dismissToast(this.parentElement)" class="text-gray-300 hover:text-gray-500 flex-shrink-0 ml-1"><i data-lucide="x" class="w-4 h-4"></i></button>`;
+      el.className = `toast`;
+      el.innerHTML = `<div class="p-2 rounded-lg ${bg[type]} ${colors[type]}"><i data-lucide="${icons[type]}" class="w-4 h-4"></i></div><div class="flex-1 min-w-0 py-1"><p class="text-sm font-semibold text-slate-700">${msg}</p></div><button onclick="dismissToast(this.parentElement)" class="text-slate-400 hover:text-slate-600 p-1"><i data-lucide="x" class="w-4 h-4"></i></button>`;
       container.appendChild(el); lucide.createIcons(); setTimeout(() => dismissToast(el), 4500);
   }
-  function dismissToast(el) { if (!el || el.classList.contains('hide')) return; el.classList.add('hide'); setTimeout(() => el.remove(), 320); }
+  function dismissToast(el) { if (!el || el.classList.contains('hide')) return; el.classList.add('hide'); setTimeout(() => el.remove(), 300); }
 </script>
 @yield('Scripts')
 </body>
