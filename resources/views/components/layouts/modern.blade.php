@@ -105,6 +105,93 @@
       container.appendChild(el); lucide.createIcons(); setTimeout(() => dismissToast(el), 4500);
   }
   function dismissToast(el) { if (!el || el.classList.contains('hide')) return; el.classList.add('hide'); setTimeout(() => el.remove(), 300); }
+
+  // Global AJAX Search & Pagination
+  document.addEventListener('DOMContentLoaded', function() {
+      let debounceTimer;
+      const searchInput = document.getElementById('searchInput');
+      const statusFilter = document.getElementById('statusFilter');
+
+      function fetchFilteredData(pageUrl = null) {
+          const currentSearchInput = document.getElementById('searchInput');
+          const currentStatusFilter = document.getElementById('statusFilter');
+          const search = currentSearchInput ? currentSearchInput.value : '';
+          const status = currentStatusFilter ? currentStatusFilter.value : '';
+          
+          let url = new URL(pageUrl || window.location.href);
+          if(search) url.searchParams.set('search', search);
+          else url.searchParams.delete('search');
+          
+          if(status !== '') url.searchParams.set('status', status);
+          else url.searchParams.delete('status');
+
+          const mainContent = document.querySelector('main');
+          if(mainContent) mainContent.style.opacity = '0.5';
+
+          fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+              .then(res => res.text())
+              .then(html => {
+                  const doc = new DOMParser().parseFromString(html, 'text/html');
+                  const newMain = doc.querySelector('main');
+                  if(newMain && mainContent) {
+                      mainContent.innerHTML = newMain.innerHTML;
+                      
+                      // Re-evaluate scripts in main to update any modal JSON data
+                      const scripts = newMain.querySelectorAll('script');
+                      scripts.forEach(s => {
+                          const newScript = document.createElement('script');
+                          newScript.textContent = s.textContent;
+                          document.body.appendChild(newScript);
+                          setTimeout(() => newScript.remove(), 100);
+                      });
+                  }
+                  if(mainContent) mainContent.style.opacity = '1';
+                  if(typeof lucide !== 'undefined') lucide.createIcons();
+                  
+                  // Re-attach listeners to the newly rendered DOM
+                  const newSearchInput = document.getElementById('searchInput');
+                  const newStatusFilter = document.getElementById('statusFilter');
+                  
+                  if(newSearchInput) {
+                      newSearchInput.focus();
+                      // Move cursor to end
+                      const val = newSearchInput.value;
+                      newSearchInput.value = '';
+                      newSearchInput.value = val;
+                      
+                      newSearchInput.addEventListener('input', () => {
+                          clearTimeout(debounceTimer);
+                          debounceTimer = setTimeout(() => fetchFilteredData(), 500);
+                      });
+                  }
+                  if(newStatusFilter) {
+                      newStatusFilter.addEventListener('change', () => fetchFilteredData());
+                  }
+                  
+                  window.history.pushState({}, '', url);
+              });
+      }
+
+      if(searchInput) {
+          searchInput.addEventListener('input', () => {
+              clearTimeout(debounceTimer);
+              debounceTimer = setTimeout(() => fetchFilteredData(), 500);
+          });
+      }
+
+      if(statusFilter) {
+          statusFilter.addEventListener('change', () => fetchFilteredData());
+      }
+      
+      // Delegation for pagination links
+      document.addEventListener('click', function(e) {
+          const link = e.target.closest('nav[role="navigation"] a');
+          if(link) {
+              e.preventDefault();
+              fetchFilteredData(link.href);
+          }
+      });
+  });
 </script>
 @yield('Scripts')
 </body>

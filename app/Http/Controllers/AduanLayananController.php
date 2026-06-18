@@ -12,8 +12,23 @@ class AduanLayananController extends Controller
 {
     public function index()
     {
-        // Ambil semua data aduan dari database
-        $aduan = AduanLayanan::all();
+        // Ambil data aduan beserta fitur pencarian dan filter
+        $query = AduanLayanan::query();
+        
+        if (request()->has('search') && request()->search != '') {
+            $search = request()->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nomor_tiket', 'like', "%{$search}%")
+                  ->orWhere('nama_lengkap', 'like', "%{$search}%")
+                  ->orWhere('isi_aduan', 'like', "%{$search}%");
+            });
+        }
+        
+        if (request()->has('status') && request()->status != '') {
+            $query->where('status', request()->status);
+        }
+        
+        $aduan = $query->latest()->paginate(10);
 
         // Kirim data ke tampilan
         return view('Admin.aduan-layanan', compact('aduan'));

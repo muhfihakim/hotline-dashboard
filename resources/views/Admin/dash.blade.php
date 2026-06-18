@@ -79,32 +79,57 @@
     </div>
   </div>
 
-  <div class="bg-white rounded-box shadow-soft border border-slate-200 overflow-hidden">
-    <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-      <h3 class="font-heading font-bold text-sm text-slate-800">Aduan & Permohonan Terbaru</h3>
-      <button class="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">Lihat Semua</button>
+  <div class="bg-white rounded-box shadow-soft border border-slate-200 p-4 mb-6" id="filter-card">
+    <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div class="flex items-center gap-2 w-full md:w-auto">
+        <div class="relative w-full md:w-64">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input type="text" id="searchInput" value="{{ request('search') }}" placeholder="Cari tiket..." class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow">
+        </div>
+      </div>
+      <div class="flex items-center gap-2 w-full md:w-auto">
+        <select id="statusFilter" class="w-full md:w-48 px-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
+          <option value="">Semua Status</option>
+          <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Open</option>
+          <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Selesai</option>
+        </select>
+      </div>
     </div>
-    <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse">
+  </div>
+
+  <div id="table-container" class="bg-white rounded-box shadow-soft border border-slate-200 overflow-hidden">
+    <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+      <h3 class="font-heading font-bold text-sm text-slate-800">Semua Aduan & Permohonan</h3>
+    </div>
+    <div class="p-5 overflow-x-auto">
+      <table class="w-full text-left border-collapse data-table">
         <thead>
           <tr>
             <th class="px-5 py-3 border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">No</th>
             <th class="px-5 py-3 border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tiket</th>
             <th class="px-5 py-3 border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Kategori</th>
+            <th class="px-5 py-3 border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
             <th class="px-5 py-3 border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Waktu</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
+        <tbody>
           @foreach ($latestData as $index => $data)
-          <tr class="hover:bg-slate-50/50 transition-colors group">
-            <td class="px-5 py-3 text-xs text-slate-500 font-medium w-12">{{ $index + 1 }}</td>
-            <td class="px-5 py-3 text-xs font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{{ $data['tiket'] }}</td>
-            <td class="px-5 py-3">
+          <tr>
+            <td class="font-medium whitespace-nowrap text-xs">{{ $latestData->firstItem() + $index }}</td>
+            <td class="font-mono text-xs text-brand-700 font-semibold">{{ $data['tiket'] }}</td>
+            <td>
               <span class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-slate-100 text-slate-600 border border-slate-200">
                 {{ $data['kategori'] }}
               </span>
             </td>
-            <td class="px-5 py-3 text-xs text-slate-500">
+            <td>
+              @if($data['status'] == '1')
+                <span class="px-2 py-1 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 uppercase tracking-wide">Selesai</span>
+              @else
+                <span class="px-2 py-1 text-[10px] font-bold rounded-md bg-orange-100 text-orange-700 uppercase tracking-wide">Open</span>
+              @endif
+            </td>
+            <td class="text-xs text-slate-500">
               <div class="flex items-center gap-1.5">
                 <i data-lucide="clock" class="w-3 h-3 text-slate-400"></i>
                 {{ \Carbon\Carbon::parse($data['waktu'])->format('d M Y, H:i') }}
@@ -114,11 +139,14 @@
           @endforeach
           @if(count($latestData) == 0)
           <tr>
-              <td colspan="4" class="px-5 py-8 text-center text-sm text-slate-400 font-medium">Belum ada data terbaru.</td>
+              <td colspan="5" class="text-center py-4 text-gray-500">Belum ada data ditemukan.</td>
           </tr>
           @endif
         </tbody>
       </table>
+    </div>
+    <div class="px-5 py-4 border-t border-slate-100 flex justify-end">
+      {{ $latestData->appends(request()->query())->links() }}
     </div>
   </div>
 </x-layouts.modern>

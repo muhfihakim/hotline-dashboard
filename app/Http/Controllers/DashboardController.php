@@ -28,51 +28,85 @@ class DashboardController extends Controller
         $totalPentest = Pentest::count();
         $totalTte = TandaTanganElektronik::count();
 
-        // Ambil data terbaru dari semua layanan
-        $latestData = collect()
-            ->merge(AduanLayanan::latest()->take(3)->get()->map(fn($item) => [
+        $search = $request->search;
+        $status = $request->status;
+
+        $applyFilters = function($q) use ($search, $status) {
+            if ($search) {
+                $q->where(function($q2) use ($search) {
+                    $q2->where('nomor_tiket', 'like', "%{$search}%");
+                });
+            }
+            if ($status !== null && $status !== '') {
+                $q->where('status', $status);
+            }
+            return $q;
+        };
+
+        // Ambil data dari semua layanan dengan filter
+        $allData = collect()
+            ->merge($applyFilters(AduanLayanan::query())->latest()->get()->map(fn($item) => [
                 'tiket' => $item->nomor_tiket ?? '-',
                 'kategori' => 'Aduan Layanan',
                 'waktu' => $item->created_at,
+                'status' => $item->status,
             ]))
-            ->merge(VirtualMeeting::latest()->take(3)->get()->map(fn($item) => [
+            ->merge($applyFilters(VirtualMeeting::query())->latest()->get()->map(fn($item) => [
                 'tiket' => $item->nomor_tiket ?? '-',
                 'kategori' => 'Virtual Meeting',
                 'waktu' => $item->created_at,
+                'status' => $item->status,
             ]))
-            ->merge(VirtualPrivateServer::latest()->take(3)->get()->map(fn($item) => [
+            ->merge($applyFilters(VirtualPrivateServer::query())->latest()->get()->map(fn($item) => [
                 'tiket' => $item->nomor_tiket ?? '-',
                 'kategori' => 'Virtual Private Server',
                 'waktu' => $item->created_at,
+                'status' => $item->status,
             ]))
-            ->merge(BandwidthOnDemand::latest()->take(3)->get()->map(fn($item) => [
+            ->merge($applyFilters(BandwidthOnDemand::query())->latest()->get()->map(fn($item) => [
                 'tiket' => $item->nomor_tiket ?? '-',
                 'kategori' => 'Bandwidth on Demand',
                 'waktu' => $item->created_at,
+                'status' => $item->status,
             ]))
-            ->merge(Infrastruktur::latest()->take(3)->get()->map(fn($item) => [
+            ->merge($applyFilters(Infrastruktur::query())->latest()->get()->map(fn($item) => [
                 'tiket' => $item->nomor_tiket ?? '-',
                 'kategori' => 'Infrastruktur Baru',
                 'waktu' => $item->created_at,
+                'status' => $item->status,
             ]))
-            ->merge(ResetEmail::latest()->take(3)->get()->map(fn($item) => [
+            ->merge($applyFilters(ResetEmail::query())->latest()->get()->map(fn($item) => [
                 'tiket' => $item->nomor_tiket ?? '-',
                 'kategori' => 'Layanan Email',
                 'waktu' => $item->created_at,
+                'status' => $item->status,
             ]))
-            ->merge(Pentest::latest()->take(3)->get()->map(fn($item) => [
+            ->merge($applyFilters(Pentest::query())->latest()->get()->map(fn($item) => [
                 'tiket' => $item->nomor_tiket ?? '-',
                 'kategori' => 'Pen-Testing',
                 'waktu' => $item->created_at,
+                'status' => $item->status,
             ]))
-            ->merge(TandaTanganElektronik::latest()->take(3)->get()->map(fn($item) => [
+            ->merge($applyFilters(TandaTanganElektronik::query())->latest()->get()->map(fn($item) => [
                 'tiket' => $item->nomor_tiket ?? '-',
                 'kategori' => 'Tanda Tangan Elektronik',
                 'waktu' => $item->created_at,
+                'status' => $item->status,
             ]));
 
         // Urutkan berdasarkan waktu terbaru
-        $latestData = $latestData->sortByDesc('waktu')->take(10);
+        $allData = $allData->sortByDesc('waktu')->values();
+
+        // Pagination Manual
+        $page = \Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1;
+        $perPage = 10;
+        $latestData = new \Illuminate\Pagination\LengthAwarePaginator(
+            $allData->forPage($page, $perPage),
+            $allData->count(),
+            $perPage,
+            $page,
+            ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(), 'query' => $request->query()]
+        );
 
         if ($request->wantsJson() || $request->is('api/*')) {
             return response()->json([

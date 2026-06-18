@@ -12,7 +12,19 @@ class BandwidthOnDemandController extends Controller
     public function index()
     {
         // Ambil semua data aduan dari database
-        $bod = BandwidthOnDemand::all();
+        
+        $query = \App\Models\BandwidthOnDemand::query();
+        if (request()->has('search') && request()->search != '') {
+            $search = request()->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nomor_tiket', 'like', "%{$search}%")
+                  ->orWhere('nama_lengkap', 'like', "%{$search}%");
+            });
+        }
+        if (request()->has('status') && request()->status != '') {
+            $query->where('status', request()->status);
+        }
+        $bod = $query->latest()->paginate(10);
 
         // Kirim data ke tampilan
         return view('Admin.bandwidth-on-demand', compact('bod'));

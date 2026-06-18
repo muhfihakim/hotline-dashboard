@@ -48,9 +48,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/test', function () {
         return view('Admin.modal');
     });
-    Route::get('/pengguna', function () {
-        return view('Admin.pengguna');
-    })->name('index.pengguna');
+    Route::get('/pengguna', [App\Http\Controllers\PenggunaController::class, 'index'])->name('index.pengguna')->middleware('userAkses:admin');
+    Route::post('/pengguna', [App\Http\Controllers\PenggunaController::class, 'store'])->name('store.pengguna.admin')->middleware('userAkses:admin');
+    Route::patch('/pengguna/{id}', [App\Http\Controllers\PenggunaController::class, 'update'])->name('update.pengguna.admin')->middleware('userAkses:admin');
+    Route::delete('/pengguna/{id}', [App\Http\Controllers\PenggunaController::class, 'destroy'])->name('destroy.pengguna.admin')->middleware('userAkses:admin');
 
     Route::get('/pimpinan', [DashboardController::class, 'indexPimpinan'])->name('dashboard.pimpinan')->middleware('userAkses:pimpinan');
 

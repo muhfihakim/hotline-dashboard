@@ -9,7 +9,25 @@
     </div>
   </div>
 
-  <div class="bg-white rounded-box shadow-soft border border-slate-200 overflow-hidden">
+  <div class="bg-white rounded-box shadow-soft border border-slate-200 p-4 mb-6" id="filter-card">
+    <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div class="flex items-center gap-2 w-full md:w-auto">
+        <div class="relative w-full md:w-64">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input type="text" id="searchInput" value="{{ request('search') }}" placeholder="Cari tiket atau nama..." class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow">
+        </div>
+      </div>
+      <div class="flex items-center gap-2 w-full md:w-auto">
+        <select id="statusFilter" class="w-full md:w-48 px-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
+          <option value="">Semua Status</option>
+          <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Open</option>
+          <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Selesai</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="table-container" class="bg-white rounded-box shadow-soft border border-slate-200 overflow-hidden">
     <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
       <h3 class="font-heading font-bold text-sm text-slate-800">Data Aduan Layanan</h3>
     </div>
@@ -50,6 +68,9 @@
         </tbody>
       </table>
     </div>
+    <div class="px-5 py-4 border-t border-slate-100 flex justify-end">
+      {{ $aduan->appends(request()->query())->links() }}
+    </div>
   </div>
 
   <!-- Reusable Modal Container -->
@@ -84,16 +105,16 @@
 
   <script>
     // Escape HTML from backend to avoid JS injection issues
-    const aduanData = @json($aduan);
-    const updateRouteBase = "{{ route('update.aduan.admin', ':id') }}";
-    const replyRouteBase = "{{ route('aduan.reply', ':id') }}";
+    var aduanData = @json($aduan);
+    var updateRouteBase = "{{ route('update.aduan.admin', ':id') }}";
+    var replyRouteBase = "{{ route('aduan.reply', ':id') }}";
 
     function openModalAduan(id) {
-      const item = aduanData.find(x => x.id == id);
+      var item = aduanData.find(x => x.id == id);
       if(!item) return;
       document.getElementById('modal-title').innerText = 'Detail Aduan';
       
-      const statusHtml = item.status == '1' ? '<span class="px-2 py-1 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 uppercase tracking-wide">Selesai</span>' : '<span class="px-2 py-1 text-[10px] font-bold rounded-md bg-orange-100 text-orange-700 uppercase tracking-wide">Open</span>';
+      var statusHtml = item.status == '1' ? '<span class="px-2 py-1 text-[10px] font-bold rounded-md bg-emerald-100 text-emerald-700 uppercase tracking-wide">Selesai</span>' : '<span class="px-2 py-1 text-[10px] font-bold rounded-md bg-orange-100 text-orange-700 uppercase tracking-wide">Open</span>';
       
       document.getElementById('modal-content').innerHTML = `
         <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 mb-4 whitespace-pre-wrap">${item.isi_aduan}</div>
@@ -110,9 +131,9 @@
     }
 
     function openReplyModal(id) {
-      const item = aduanData.find(x => x.id == id);
+      var item = aduanData.find(x => x.id == id);
       if(!item) return;
-      const nomor = item.user_id ? item.user_id.replace('@c.us', '') : '';
+      var nomor = item.user_id ? item.user_id.replace('@c.us', '') : '';
       document.getElementById('modal-title').innerText = 'Balas Aduan Tiket: ' + item.nomor_tiket;
       document.getElementById('modal-content').innerHTML = `
         <form action="${replyRouteBase.replace(':id', item.id)}" method="POST">
@@ -139,13 +160,13 @@
     }
 
     function showModal() {
-        const backdrop = document.getElementById('modal-backdrop');
+        var backdrop = document.getElementById('modal-backdrop');
         backdrop.classList.remove('hidden');
         setTimeout(() => backdrop.style.opacity = '1', 10);
         lucide.createIcons();
     }
     function closeModal() {
-        const backdrop = document.getElementById('modal-backdrop');
+        var backdrop = document.getElementById('modal-backdrop');
         backdrop.style.opacity = '0';
         setTimeout(() => backdrop.classList.add('hidden'), 200);
     }
