@@ -21,3 +21,9 @@ Homestead.yaml
 Homestead.json
 /.vagrant
 .phpunit.result.cache
+
+# Whatsapp Web JS
+.wwebjs_auth/
+.wwebjs_cache/
+wa-bot/node_modules/
+

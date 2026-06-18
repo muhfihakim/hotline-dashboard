@@ -26,23 +26,19 @@ Route::get('/home', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin', [DashboardController::class, 'index'])->name('dashboard.admin')->middleware('userAkses:admin');
-    Route::get('/aduan-layanan', [AduanLayananController::class, 'index'])->name('index.aduan.admin')->middleware('userAkses:admin');
-    Route::patch('/aduan-layanan/{id}/update-status', [AduanLayananController::class, 'update'])->name('update.aduan.admin')->middleware('userAkses:admin');
-    Route::post('/aduan-layanan/{id}/reply', [AduanLayananController::class, 'reply'])->name('aduan.reply')->middleware('userAkses:admin');
-    Route::get('/virtual-meeting', [VirtualMeetingController::class, 'index'])->name('index.vm.admin')->middleware('userAkses:admin');
-    Route::patch('/virtual-meeting/{id}/update-status', [VirtualMeetingController::class, 'update'])->name('update.vm.admin')->middleware('userAkses:admin');
-    Route::get('/virtual-private-server', [VirtualPrivateServerController::class, 'index'])->name('index.vps.admin')->middleware('userAkses:admin');
-    Route::patch('/virtual-private-server/{id}/update-status', [VirtualPrivateServerController::class, 'update'])->name('update.vps.admin')->middleware('userAkses:admin');
-    Route::get('/bandwidth-on-demand', [BandwidthOnDemandController::class, 'index'])->name('index.bod.admin')->middleware('userAkses:admin');
-    Route::patch('/bandwidth-on-demand/{id}/update-status', [BandwidthOnDemandController::class, 'update'])->name('update.bod.admin')->middleware('userAkses:admin');
-    Route::get('/tanda-tangan-elektronik', [TandaTanganElektronikController::class, 'index'])->name('index.tte.admin')->middleware('userAkses:admin');
-    Route::patch('/tanda-tangan-elektronik/{id}/update-status', [TandaTanganElektronikController::class, 'update'])->name('update.tte.admin')->middleware('userAkses:admin');
-    Route::get('/infrastruktur-baru', [InfrastrukturController::class, 'index'])->name('index.infrastruktur.admin')->middleware('userAkses:admin');
-    Route::patch('/infrastruktur-baru/{id}/update-status', [InfrastrukturController::class, 'update'])->name('update.infrastruktur.admin')->middleware('userAkses:admin');
-    Route::get('/reset-email', [ResetEmailController::class, 'index'])->name('index.resetemail.admin')->middleware('userAkses:admin');
-    Route::patch('/reset-email/{id}/update-status', [ResetEmailController::class, 'update'])->name('update.resetemail.admin')->middleware('userAkses:admin');
-    Route::get('/pentesting', [PentestingController::class, 'index'])->name('index.pentest.admin')->middleware('userAkses:admin');
-    Route::patch('/pentesting/{id}/update-status', [PentestingController::class, 'update'])->name('update.pentest.admin')->middleware('userAkses:admin');
+    
+    // Manajemen Layanan (CRUD CMS)
+    Route::get('/manajemen-layanan', [App\Http\Controllers\ManajemenLayananController::class, 'index'])->name('index.manajemen.layanan')->middleware('userAkses:admin');
+    Route::post('/manajemen-layanan', [App\Http\Controllers\ManajemenLayananController::class, 'store'])->name('store.manajemen.layanan')->middleware('userAkses:admin');
+    Route::patch('/manajemen-layanan/{id}', [App\Http\Controllers\ManajemenLayananController::class, 'update'])->name('update.manajemen.layanan')->middleware('userAkses:admin');
+    Route::delete('/manajemen-layanan/{id}', [App\Http\Controllers\ManajemenLayananController::class, 'destroy'])->name('destroy.manajemen.layanan')->middleware('userAkses:admin');
+    Route::patch('/manajemen-layanan/{id}/pertanyaan', [App\Http\Controllers\ManajemenLayananController::class, 'updatePertanyaan'])->name('update.pertanyaan.layanan')->middleware('userAkses:admin');
+
+    // Layanan Dinamis
+    Route::get('/layanan/{kode}', [App\Http\Controllers\LayananController::class, 'index'])->name('index.layanan.admin')->middleware('userAkses:admin');
+    Route::patch('/layanan/{id}/update-status', [App\Http\Controllers\LayananController::class, 'update'])->name('update.layanan.admin')->middleware('userAkses:admin');
+    Route::post('/layanan/{id}/reply', [App\Http\Controllers\LayananController::class, 'reply'])->name('reply.layanan.admin')->middleware('userAkses:admin');
+
     Route::get('/laporan-rekap', [LaporanController::class, 'index'])->name('index.rekap')->middleware('userAkses:admin');
     Route::get('/export/layanan', [ExportController::class, 'exportLayanan'])->name('export.layanan');
     Route::get('/test', function () {
@@ -52,6 +48,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pengguna', [App\Http\Controllers\PenggunaController::class, 'store'])->name('store.pengguna.admin')->middleware('userAkses:admin');
     Route::patch('/pengguna/{id}', [App\Http\Controllers\PenggunaController::class, 'update'])->name('update.pengguna.admin')->middleware('userAkses:admin');
     Route::delete('/pengguna/{id}', [App\Http\Controllers\PenggunaController::class, 'destroy'])->name('destroy.pengguna.admin')->middleware('userAkses:admin');
+    
+    Route::get('/bot-settings', [App\Http\Controllers\BotSettingController::class, 'index'])->name('index.bot-settings.admin')->middleware('userAkses:admin');
+    Route::patch('/bot-settings', [App\Http\Controllers\BotSettingController::class, 'update'])->name('update.bot-settings.admin')->middleware('userAkses:admin');
+    Route::post('/bot-settings/logout', [App\Http\Controllers\BotSettingController::class, 'logoutBot'])->name('logout.bot.admin')->middleware('userAkses:admin');
 
     Route::get('/pimpinan', [DashboardController::class, 'indexPimpinan'])->name('dashboard.pimpinan')->middleware('userAkses:pimpinan');
 

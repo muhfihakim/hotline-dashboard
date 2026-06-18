@@ -17,38 +17,32 @@
     <a href="{{ route('dashboard.admin') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('dashboard.admin') ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
       <i data-lucide="layout-dashboard" class="w-4 h-4 {{ request()->routeIs('dashboard.admin') ? 'text-blue-600' : 'text-slate-400' }}"></i> Dashboard
     </a>
-    <a href="{{ route('index.aduan.admin') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('index.aduan.admin') ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
-      <i data-lucide="message-circle" class="w-4 h-4 {{ request()->routeIs('index.aduan.admin') ? 'text-blue-600' : 'text-slate-400' }}"></i> Aduan Layanan
-    </a>
-    <a href="{{ route('index.vm.admin') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('index.vm.admin') ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
-      <i data-lucide="video" class="w-4 h-4 {{ request()->routeIs('index.vm.admin') ? 'text-blue-600' : 'text-slate-400' }}"></i> Virtual Meeting
-    </a>
-    <a href="{{ route('index.vps.admin') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('index.vps.admin') ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
-      <i data-lucide="database" class="w-4 h-4 {{ request()->routeIs('index.vps.admin') ? 'text-blue-600' : 'text-slate-400' }}"></i> VPS
-    </a>
-    <a href="{{ route('index.bod.admin') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('index.bod.admin') ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
-      <i data-lucide="wifi" class="w-4 h-4 {{ request()->routeIs('index.bod.admin') ? 'text-blue-600' : 'text-slate-400' }}"></i> Bandwidth on Demand
-    </a>
-    <a href="{{ route('index.infrastruktur.admin') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('index.infrastruktur.admin') ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
-      <i data-lucide="network" class="w-4 h-4 {{ request()->routeIs('index.infrastruktur.admin') ? 'text-blue-600' : 'text-slate-400' }}"></i> Infrastruktur Baru
-    </a>
-    <a href="{{ route('index.resetemail.admin') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('index.resetemail.admin') ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
-      <i data-lucide="mail" class="w-4 h-4 {{ request()->routeIs('index.resetemail.admin') ? 'text-blue-600' : 'text-slate-400' }}"></i> Layanan E-Mail
-    </a>
-    <a href="{{ route('index.pentest.admin') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('index.pentest.admin') ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
-      <i data-lucide="shield" class="w-4 h-4 {{ request()->routeIs('index.pentest.admin') ? 'text-blue-600' : 'text-slate-400' }}"></i> Pen-Testing
-    </a>
-    <a href="{{ route('index.tte.admin') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('index.tte.admin') ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
-      <i data-lucide="file-signature" class="w-4 h-4 {{ request()->routeIs('index.tte.admin') ? 'text-blue-600' : 'text-slate-400' }}"></i> TTE
-    </a>
+    @php
+        $menus = \App\Models\Layanan::orderBy('kode', 'asc')->get();
+    @endphp
+
+    @foreach($menus as $menu)
+        @php
+            $isActive = request()->is('layanan/' . $menu->kode) || request()->is('admin/layanan/' . $menu->kode);
+        @endphp
+        <a href="{{ route('index.layanan.admin', $menu->kode) }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ $isActive ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+          <i data-lucide="{{ $menu->icon ?? 'folder' }}" class="w-4 h-4 {{ $isActive ? 'text-blue-600' : 'text-slate-400' }}"></i> {{ $menu->nama }}
+        </a>
+    @endforeach
 
     <div class="pt-4 mt-2 border-t border-slate-100">
-        <p class="px-3 text-slate-400 text-[10px] font-bold uppercase tracking-[0.1em] mb-2">Laporan & Pengguna</p>
+        <p class="px-3 text-slate-400 text-[10px] font-bold uppercase tracking-[0.1em] mb-2">Laporan & Pengaturan</p>
         <a href="{{ route('index.rekap') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('index.rekap') ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
           <i data-lucide="bar-chart-2" class="w-4 h-4 {{ request()->routeIs('index.rekap') ? 'text-blue-600' : 'text-slate-400' }}"></i> Laporan Rekap
         </a>
+        <a href="{{ route('index.manajemen.layanan') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('index.manajemen.layanan') ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+          <i data-lucide="blocks" class="w-4 h-4 {{ request()->routeIs('index.manajemen.layanan') ? 'text-blue-600' : 'text-slate-400' }}"></i> Manajemen Layanan
+        </a>
         <a href="{{ route('index.pengguna') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('index.pengguna') ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
           <i data-lucide="users" class="w-4 h-4 {{ request()->routeIs('index.pengguna') ? 'text-blue-600' : 'text-slate-400' }}"></i> Pengguna Aplikasi
+        </a>
+        <a href="{{ route('index.bot-settings.admin') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('index.bot-settings.admin') ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+          <i data-lucide="bot" class="w-4 h-4 {{ request()->routeIs('index.bot-settings.admin') ? 'text-blue-600' : 'text-slate-400' }}"></i> Pengaturan Bot
         </a>
     </div>
   </nav>

@@ -2,158 +2,92 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AduanLayanan;
-use App\Models\BandwidthOnDemand;
-use App\Models\Infrastruktur;
-use App\Models\Pentest;
-use App\Models\ResetEmail;
-use App\Models\TandaTanganElektronik;
-use App\Models\User;
-use App\Models\VirtualMeeting;
-use App\Models\VirtualPrivateServer;
+use App\Models\Layanan;
+use App\Models\Permohonan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // Hitung total
-        $totalAduanLayanan = AduanLayanan::count();
-        $totalVirtualMeeting = VirtualMeeting::count();
-        $totalVps = VirtualPrivateServer::count();
-        $totalBandwidthOnDemand = BandwidthOnDemand::count();
-        $totalInfrastrukturBaru = Infrastruktur::count();
-        $totalResetEmail = ResetEmail::count();
-        $totalPentest = Pentest::count();
-        $totalTte = TandaTanganElektronik::count();
+        // 1. Ambil semua layanan dinamis
+        $layanans = Layanan::orderBy('kode', 'asc')->get();
 
-        $search = $request->search;
-        $status = $request->status;
+        // 2. Hitung statistik dinamis per layanan
+        $stats = [];
+        foreach ($layanans as $layanan) {
+            $stats[$layanan->kode] = [
+                'nama' => $layanan->nama,
+                'icon' => $layanan->icon ?? 'folder',
+                'total' => Permohonan::where('service_id', $layanan->kode)->count(),
+                'kode' => $layanan->kode
+            ];
+        }
 
-        $applyFilters = function($q) use ($search, $status) {
-            if ($search) {
-                $q->where(function($q2) use ($search) {
-                    $q2->where('nomor_tiket', 'like', "%{$search}%");
-                });
-            }
-            if ($status !== null && $status !== '') {
-                $q->where('status', $status);
-            }
-            return $q;
-        };
+        // 3. Ambil permohonan dengan fitur filter
+        $query = Permohonan::with('layanan');
 
-        // Ambil data dari semua layanan dengan filter
-        $allData = collect()
-            ->merge($applyFilters(AduanLayanan::query())->latest()->get()->map(fn($item) => [
-                'tiket' => $item->nomor_tiket ?? '-',
-                'kategori' => 'Aduan Layanan',
-                'waktu' => $item->created_at,
-                'status' => $item->status,
-            ]))
-            ->merge($applyFilters(VirtualMeeting::query())->latest()->get()->map(fn($item) => [
-                'tiket' => $item->nomor_tiket ?? '-',
-                'kategori' => 'Virtual Meeting',
-                'waktu' => $item->created_at,
-                'status' => $item->status,
-            ]))
-            ->merge($applyFilters(VirtualPrivateServer::query())->latest()->get()->map(fn($item) => [
-                'tiket' => $item->nomor_tiket ?? '-',
-                'kategori' => 'Virtual Private Server',
-                'waktu' => $item->created_at,
-                'status' => $item->status,
-            ]))
-            ->merge($applyFilters(BandwidthOnDemand::query())->latest()->get()->map(fn($item) => [
-                'tiket' => $item->nomor_tiket ?? '-',
-                'kategori' => 'Bandwidth on Demand',
-                'waktu' => $item->created_at,
-                'status' => $item->status,
-            ]))
-            ->merge($applyFilters(Infrastruktur::query())->latest()->get()->map(fn($item) => [
-                'tiket' => $item->nomor_tiket ?? '-',
-                'kategori' => 'Infrastruktur Baru',
-                'waktu' => $item->created_at,
-                'status' => $item->status,
-            ]))
-            ->merge($applyFilters(ResetEmail::query())->latest()->get()->map(fn($item) => [
-                'tiket' => $item->nomor_tiket ?? '-',
-                'kategori' => 'Layanan Email',
-                'waktu' => $item->created_at,
-                'status' => $item->status,
-            ]))
-            ->merge($applyFilters(Pentest::query())->latest()->get()->map(fn($item) => [
-                'tiket' => $item->nomor_tiket ?? '-',
-                'kategori' => 'Pen-Testing',
-                'waktu' => $item->created_at,
-                'status' => $item->status,
-            ]))
-            ->merge($applyFilters(TandaTanganElektronik::query())->latest()->get()->map(fn($item) => [
-                'tiket' => $item->nomor_tiket ?? '-',
-                'kategori' => 'Tanda Tangan Elektronik',
-                'waktu' => $item->created_at,
-                'status' => $item->status,
-            ]));
+        if ($request->has('search') && $request->search != '') {
+            $search = strtolower($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('nomor_tiket', 'LIKE', "%{$search}%")
+                  ->orWhere('data', 'LIKE', "%{$search}%");
+            });
+        }
 
-        // Urutkan berdasarkan waktu terbaru
-        $allData = $allData->sortByDesc('waktu')->values();
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
 
-        // Pagination Manual
-        $page = \Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1;
-        $perPage = 10;
+        // 4. Format latest data agar kompatibel dengan view sebelumnya
+        $latestDataPaginator = $query->latest()->paginate(10);
+        $latestData = $latestDataPaginator->map(function($item) {
+            return [
+                'tiket' => $item->nomor_tiket ?? '-',
+                'kategori' => $item->layanan ? $item->layanan->nama : 'Layanan ('.$item->service_id.')',
+                'waktu' => $item->created_at,
+                'status' => $item->status,
+                'kode_layanan' => $item->service_id
+            ];
+        });
+
+        // Rekonstruksi pagination
         $latestData = new \Illuminate\Pagination\LengthAwarePaginator(
-            $allData->forPage($page, $perPage),
-            $allData->count(),
-            $perPage,
-            $page,
+            $latestData,
+            $latestDataPaginator->total(),
+            $latestDataPaginator->perPage(),
+            $latestDataPaginator->currentPage(),
             ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(), 'query' => $request->query()]
         );
 
         if ($request->wantsJson() || $request->is('api/*')) {
             return response()->json([
-                'stats' => [
-                    'totalAduanLayanan' => $totalAduanLayanan,
-                    'totalVirtualMeeting' => $totalVirtualMeeting,
-                    'totalVps' => $totalVps,
-                    'totalBandwidthOnDemand' => $totalBandwidthOnDemand,
-                    'totalInfrastrukturBaru' => $totalInfrastrukturBaru,
-                    'totalResetEmail' => $totalResetEmail,
-                    'totalPentest' => $totalPentest,
-                    'totalTte' => $totalTte,
-                ],
+                'stats' => $stats,
                 'latestData' => $latestData
             ]);
         }
 
-        return view('Admin.dash', compact(
-            'totalAduanLayanan',
-            'totalVirtualMeeting',
-            'totalVps',
-            'totalBandwidthOnDemand',
-            'totalInfrastrukturBaru',
-            'totalResetEmail',
-            'totalPentest',
-            'totalTte',
-            'latestData'
-        ));
+        return view('Admin.dash', compact('stats', 'latestData'));
     }
 
     public function indexPimpinan(Request $request)
     {
-        $data = [
-            'aduanLayanan' => \App\Models\AduanLayanan::all(),
-            'virtualMeeting' => \App\Models\VirtualMeeting::all(),
-            'vps' => \App\Models\VirtualPrivateServer::all(),
-            'bod' => \App\Models\BandwidthOnDemand::all(),
-            'infrastruktur' => \App\Models\Infrastruktur::all(),
-            'resetEmail' => \App\Models\ResetEmail::all(),
-            'pentest' => \App\Models\Pentest::all(),
-            'tte' => \App\Models\TandaTanganElektronik::all(),
-        ];
+        // 1. Ambil semua layanan dinamis
+        $layanans = Layanan::orderBy('kode', 'asc')->get();
+
+        // 2. Format struktur dinamis per layanan
+        $data = [];
+        foreach ($layanans as $layanan) {
+            $data[$layanan->kode] = [
+                'nama' => $layanan->nama,
+                'permohonan' => Permohonan::where('service_id', $layanan->kode)->get()
+            ];
+        }
 
         if ($request->wantsJson() || $request->is('api/*')) {
             return response()->json($data);
         }
 
-        return view('Pimpinan.dash', $data);
+        return view('Pimpinan.dash', compact('data', 'layanans'));
     }
 }

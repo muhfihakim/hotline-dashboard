@@ -6,77 +6,17 @@
   </div>
 
   <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-    <!-- Stat Card 1 -->
+    @foreach($stats as $stat)
     <div class="stat-card rounded-box shadow-soft p-4 border border-slate-200">
       <div class="flex items-center gap-3 mb-2">
-        <div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0"><i data-lucide="message-square" class="w-4 h-4 text-blue-600"></i></div>
-        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide leading-tight">Aduan Layanan</p>
+        <div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+            <i data-lucide="{{ $stat['icon'] ?? 'folder' }}" class="w-4 h-4 text-blue-600"></i>
+        </div>
+        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide leading-tight">{{ $stat['nama'] }}</p>
       </div>
-      <p class="text-2xl font-heading font-bold text-slate-800">{{ $totalAduanLayanan }}</p>
+      <p class="text-2xl font-heading font-bold text-slate-800">{{ $stat['total'] }}</p>
     </div>
-
-    <!-- Stat Card 2 -->
-    <div class="stat-card rounded-box shadow-soft p-4 border border-slate-200">
-      <div class="flex items-center gap-3 mb-2">
-        <div class="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0"><i data-lucide="video" class="w-4 h-4 text-indigo-600"></i></div>
-        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide leading-tight">Virtual Meeting</p>
-      </div>
-      <p class="text-2xl font-heading font-bold text-slate-800">{{ $totalVirtualMeeting }}</p>
-    </div>
-
-    <!-- Stat Card 3 -->
-    <div class="stat-card rounded-box shadow-soft p-4 border border-slate-200">
-      <div class="flex items-center gap-3 mb-2">
-        <div class="w-8 h-8 rounded-lg bg-cyan-50 border border-cyan-100 flex items-center justify-center shrink-0"><i data-lucide="database" class="w-4 h-4 text-cyan-600"></i></div>
-        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide leading-tight">VPS</p>
-      </div>
-      <p class="text-2xl font-heading font-bold text-slate-800">{{ $totalVps }}</p>
-    </div>
-
-    <!-- Stat Card 4 -->
-    <div class="stat-card rounded-box shadow-soft p-4 border border-slate-200">
-      <div class="flex items-center gap-3 mb-2">
-        <div class="w-8 h-8 rounded-lg bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0"><i data-lucide="wifi" class="w-4 h-4 text-sky-600"></i></div>
-        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide leading-tight">Bandwidth on Demand</p>
-      </div>
-      <p class="text-2xl font-heading font-bold text-slate-800">{{ $totalBandwidthOnDemand }}</p>
-    </div>
-
-    <!-- Stat Card 5 -->
-    <div class="stat-card rounded-box shadow-soft p-4 border border-slate-200">
-      <div class="flex items-center gap-3 mb-2">
-        <div class="w-8 h-8 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center shrink-0"><i data-lucide="network" class="w-4 h-4 text-teal-600"></i></div>
-        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide leading-tight">Infrastruktur Baru</p>
-      </div>
-      <p class="text-2xl font-heading font-bold text-slate-800">{{ $totalInfrastrukturBaru }}</p>
-    </div>
-
-    <!-- Stat Card 6 -->
-    <div class="stat-card rounded-box shadow-soft p-4 border border-slate-200">
-      <div class="flex items-center gap-3 mb-2">
-        <div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0"><i data-lucide="mail" class="w-4 h-4 text-blue-600"></i></div>
-        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide leading-tight">Reset Email</p>
-      </div>
-      <p class="text-2xl font-heading font-bold text-slate-800">{{ $totalResetEmail }}</p>
-    </div>
-
-    <!-- Stat Card 7 -->
-    <div class="stat-card rounded-box shadow-soft p-4 border border-slate-200">
-      <div class="flex items-center gap-3 mb-2">
-        <div class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0"><i data-lucide="shield" class="w-4 h-4 text-slate-600"></i></div>
-        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide leading-tight">Pen-Testing</p>
-      </div>
-      <p class="text-2xl font-heading font-bold text-slate-800">{{ $totalPentest }}</p>
-    </div>
-
-    <!-- Stat Card 8 -->
-    <div class="stat-card rounded-box shadow-soft p-4 border border-slate-200">
-      <div class="flex items-center gap-3 mb-2">
-        <div class="w-8 h-8 rounded-lg bg-violet-50 border border-violet-100 flex items-center justify-center shrink-0"><i data-lucide="file-signature" class="w-4 h-4 text-violet-600"></i></div>
-        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide leading-tight">TTE</p>
-      </div>
-      <p class="text-2xl font-heading font-bold text-slate-800">{{ $totalTte }}</p>
-    </div>
+    @endforeach
   </div>
 
   <div class="bg-white rounded-box shadow-soft border border-slate-200 p-4 mb-6" id="filter-card">

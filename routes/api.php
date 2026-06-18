@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
 
+// Rute Webhook Node.js Bot
+Route::post('/bot/webhook', [App\Http\Controllers\Api\BotWebhookController::class, 'handle']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
